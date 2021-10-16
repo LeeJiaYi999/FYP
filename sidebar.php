@@ -1,6 +1,7 @@
 <?php
 include("db_connection.php");
 ?>
+
 <html>
     <head><meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'></head>
     <body class="skin-black">

@@ -2,16 +2,18 @@
 session_start();
 include("db_connection.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
-    $sql = "UPDATE employee SET employee_name='".$_POST['ename']."',image=null,password='".$_POST['password']."',"
-            . "ic_no='".$_POST['ic']."',email='".$_POST['email']."',phone_no='".$_POST['phone']."',address='".$_POST['address']."' WHERE employee_id='".$_SESSION["User"]["employee_id"]."'";
-    if($conn->query($sql)){
-        header("location: home.php");
-        
-    }else{
-        echo '<script>alert("Update fail !\nContact IT department for maintainence");'
-        . 'var currentURL = window.location.href;window.location.href = currentURL;</script>';
+    $sql = "UPDATE employee SET employee_name='" . $_POST['ename'] . "',image=null,password='" . $_POST['password'] . "',"
+            . "ic_no='" . $_POST['ic'] . "',email='" . $_POST['email'] . "',phone_no='" . $_POST['phone'] . "',address='" . $_POST['address'] . "' WHERE employee_id='" . $_SESSION["User"]["employee_id"] . "'";
+    if ($conn->query($sql)) {
+        $_SESSION["User"]["employee_name"] = $_POST['ename'];
+        $_SESSION["User"]["password"] = $_POST['password'];
+        $_SESSION["User"]["ic_no"] = $_POST['ic'];
+        $_SESSION["User"]["email"] = $_POST['email'];
+        $_SESSION["User"]["phone_no"] = $_POST['phone'];
+        $_SESSION["User"]["address"] = $_POST['address'];
+        echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
+    } else {
+        echo '<script>alert("Update fail !");</script>';
     }
 }
 ?>
@@ -71,36 +73,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     <label>Employee Name</label>
                                                     <input type="text" class="form-control" name="ename" id="ename" placeholder="Enter Eployee Name" required="required" 
                                                            value="<?php
-                                                    echo $_SESSION["User"]["employee_name"];
-                                                    ?>">
+                                                           echo $_SESSION["User"]["employee_name"];
+                                                           ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Password</label>
                                                     <input type="password" class="form-control" name="password" id="lname" placeholder="Enter Password" required="required" 
                                                            value="<?php
-                                                    echo $_SESSION["User"]["password"];
-                                                    ?>">
+                                                           echo $_SESSION["User"]["password"];
+                                                           ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>IC Number</label>
                                                     <input type="text" class="form-control" name="ic" id="ic" placeholder="Enter IC Number" required="required" 
                                                            value="<?php
-                                                    echo $_SESSION["User"]["ic_no"];
-                                                    ?>">
+                                                           echo $_SESSION["User"]["ic_no"];
+                                                           ?>">
                                                 </div> 
                                                 <div class="form-group">
                                                     <label>Email</label>
                                                     <input type="text" class="form-control" name="email" id="email" placeholder="Enter Email" required="required" 
                                                            value="<?php
-                                                    echo $_SESSION["User"]["email"];
-                                                    ?>">
+                                                           echo $_SESSION["User"]["email"];
+                                                           ?>">
                                                 </div> 
                                                 <div class="form-group">
                                                     <label>Phone Number</label>
                                                     <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter Phone Number" required="required" 
                                                            value="<?php
-                                                    echo $_SESSION["User"]["phone_no"];
-                                                    ?>">
+                                                           echo $_SESSION["User"]["phone_no"];
+                                                           ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Address</label>

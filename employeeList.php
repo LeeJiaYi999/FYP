@@ -64,15 +64,25 @@ include("db_connection.php");
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Trident</td>
-                                                <td>Internet
-                                                    Explorer 4.0</td>
-                                                <td>Win 95+</td>
-                                                <td> 4</td>
-                                                <td>X</td>
-                                                <td>v</td>
-                                            </tr>
+                                            <?php
+                                            $sql = "SELECT * FROM employee";
+                                            $result = $conn->query($sql);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    echo "<tr>
+                                                <td>".$row["employee_id"]."</td>
+                                                <td>".$row["employee_name"]."</td>
+                                                <td>".$row["position"]."</td>
+                                                <td>".$row["password"]."</td>
+                                                <td>".$row["employee_type"]."</td>
+                                                <td>".$row["email"]."</td>
+                                            </tr>";
+                                                }
+                                            } else {
+                                                echo '<script>alert("Invalid input !")</script>';
+                                            }
+                                            ?>
+
 
                                         </tbody>
                                     </table>

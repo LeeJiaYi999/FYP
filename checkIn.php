@@ -51,7 +51,7 @@ include("db_connection.php");
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Check In Time</label>
-                                                    <input type="text" class="form-control" name="checkin" id="checkin" placeholder="Check In Time" disabled/>
+                                                    <input type="text" class="form-control" name="checkin" id="checkin" placeholder="Check In Time" readOnly/>
                                                 </div>                                            
                                                 <div class="form-group">
                                                     <label>Status</label>

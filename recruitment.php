@@ -1,6 +1,30 @@
 <?php
 session_start();
 include("db_connection.php");
+$sql = "SELECT employee_id FROM employee ORDER BY employee_id DESC LIMIT 1";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = mysqli_fetch_array($result)) {
+        $latestnum = ((int) substr($row['employee_id'], 1)) + 1;
+        $newid = "E{$latestnum}";
+        break;
+    }
+} else {
+    $newid = "E101";
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $sql = "INSERT INTO employee(employee_id, employee_name, image, password, position, ic_no, gender, employee_type, email, birth_date, phone_no, address, department_name, leave_available, salary_amount) "
+            . "VALUES ('" . $_POST['eid'] . "','" . $_POST['ename'] . "', null ,'" . $_POST['password'] . "','" . $_POST['position'] . "'"
+            . ",'" . $_POST['ic'] . "','" . $_POST['gender'] . "','" . $_POST['etype'] . "','" . $_POST['email'] . "'"
+            . ",'" . $_POST['bdate'] . "','" . $_POST['phone'] . "','" . $_POST['address'] . "','" . $_POST['dname'] . "'"
+            . ",'" . $_POST['leave'] . "','" . $_POST['salary'] . "')";
+    if ($conn->query($sql)) {
+        echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
+
+    }else{
+        echo '<script>alert("Create Fail !");</script>';
+    }
+}
 ?>
 
 <html>
@@ -44,16 +68,16 @@ include("db_connection.php");
                                     <h3 class="box-title">Register New Employee</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
-                                <form role="form">
+                                <form method="post">
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="col-md-12">
                                                     <img class="img-fluid mb-12" src="<?php
-                                                    if (isset($current_data)) {
-                                                        echo $current_data["img"];
-                                                    }
-                                                    ?>" alt="Photo" style="width: 100%;height:300px;padding-top: 10px" id="img_display" name="img_display">
+        if (isset($current_data)) {
+            echo $current_data["img"];
+        }
+        ?>" alt="Photo" style="width: 100%;height:300px;padding-top: 10px" id="img_display" name="img_display">
                                                 </div>
                                                 <div class="col-md-12" >
                                                     <div class="form-group" style="padding-top: 15px">
@@ -66,7 +90,7 @@ include("db_connection.php");
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Employee ID</label>
-                                                    <input type="text" class="form-control" name="eid" id="eid" placeholder="Employee ID" disabled>
+                                                    <input type="text" class="form-control" name="eid" id="eid" placeholder="Employee ID" value="<?php echo $newid ?>" readOnly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Employee Name</label>
@@ -74,7 +98,7 @@ include("db_connection.php");
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Password</label>
-                                                    <input type="password" class="form-control" name="lname" id="lname" placeholder="Enter Password">
+                                                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>IC Number</label>
@@ -82,16 +106,16 @@ include("db_connection.php");
                                                 </div> 
                                                 <div class="form-group">
                                                     <label>Gender</label>
-                                                    <select class="form-control">
-                                                        <option>Male</option>
-                                                        <option>Female</option>
+                                                    <select class="form-control" name="gender">
+                                                        <option value="male">Male</option>
+                                                        <option value="female">Female</option>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Employee Type</label>
-                                                    <select class="form-control">
-                                                        <option>Admin</option>
-                                                        <option>Employee</option>
+                                                    <select class="form-control" name="etype">
+                                                        <option value="Admin">Admin</option>
+                                                        <option value="Employee">Employee</option>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
@@ -123,13 +147,13 @@ include("db_connection.php");
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Department Name</label>
-                                                    <select class="form-control">
+                                                    <select class="form-control" name="dname">
                                                         <?php
                                                         $sql = "SELECT * FROM department";
                                                         $result = $conn->query($sql);
                                                         if ($result->num_rows > 0) {
                                                             while ($row = mysqli_fetch_array($result)) {
-                                                                echo "<option>".$row["department_name"]."</option>";
+                                                                echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
                                                             }
                                                         } else {
                                                             echo '<script>alert("Invalid input !")</script>';

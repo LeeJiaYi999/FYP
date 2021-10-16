@@ -2,6 +2,7 @@
 session_start();
 include("db_connection.php");
 
+echo '<script>var available_Leave = ' . json_encode($_SESSION['User']["leave_available"]) . ';</script>';
 ?>
 
 <!DOCTYPE html>
@@ -59,15 +60,15 @@ include("db_connection.php");
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Leave Day</label>
-                                                    <input type="text" class="form-control" name="lday" id="lday" placeholder="Enter Leave Day">
+                                                    <input type="text" class="form-control" name="lday" id="lday" placeholder="Leave Day" readOnly>
                                                 </div>
                                                 <div class="from-group">
                                                     <label>Start Date:</label>
-                                                    <input type="date" class="form-control" name="sdate" id="sdate" placeholder="Enter Start Date">
+                                                    <input type="date" class="form-control" name="sdate" onclick="update_day()" id="sdate" placeholder="Enter Start Date">
                                                 </div>
                                                 <div class="from-group">
                                                     <label>End Date:</label>
-                                                    <input type="date" class="form-control" name="edate" id="edate" placeholder="Enter End Date">
+                                                    <input type="date" class="form-control" name="edate" onclick="update_day()" id="edate" placeholder="Enter End Date">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Leave Type</label>
@@ -113,11 +114,21 @@ include("db_connection.php");
         <!-- AdminLTE App -->
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
 
-        <script type="text/javascript">
-            $(function() {
-            //Datemask dd/mm/yyyy
-            $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
+        <script>
+                                                        function update_day() {
+                                                            var sdate = new Date(document.getElementById("sdate").value);
+                                                            var edate = new Date(document.getElementById("edate").value);
+                                                            console.log(edate.getDate().toString());
+                                                            var Difference_In_Time = edate.getDate() - sdate.getDate();
+                                                            // To calculate the no. of days between two dates
+                                                            var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+                                                            console.log(Difference_In_Days.toString());
+                                                            document.getElementById("lday").value = Difference_In_Days.toString();
+                                                        }
+
         </script>
+
+
     </body>
 </html>
 
