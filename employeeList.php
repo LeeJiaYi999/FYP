@@ -56,9 +56,9 @@ include("db_connection.php");
                                         <thead>
                                             <tr>
                                                 <th>Employee ID</th>
-                                                <th>First Name</th>
-                                                <th>Last Name(s)</th>
+                                                <th>Name</th>
                                                 <th>Position</th>
+                                                <th>Employee Type</th>
                                                 <th>Email</th>
                                                 <th>View</th>
                                             </tr>
@@ -70,12 +70,12 @@ include("db_connection.php");
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
                                                     echo "<tr>
-                                                <td>".$row["employee_id"]."</td>
-                                                <td>".$row["employee_name"]."</td>
-                                                <td>".$row["position"]."</td>
-                                                <td>".$row["password"]."</td>
-                                                <td>".$row["employee_type"]."</td>
-                                                <td>".$row["email"]."</td>
+                                                <td>" . $row["employee_id"] . "</td>
+                                                <td>" . $row["employee_name"] . "</td>
+                                                <td>" . $row["position"] . "</td>
+                                                <td>" . $row["employee_type"] . "</td>
+                                                <td>" . $row["email"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php'><i class='fa fa-camera'></i></a></td>
                                             </tr>";
                                                 }
                                             } else {
