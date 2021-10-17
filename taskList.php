@@ -60,22 +60,31 @@ include("db_connection.php");
                                                 <th>Task Title</th>
                                                 <th>Task Description</th>
                                                 <th>Responsible member(s)</th>
-                                                <th>Progress</th>
+                                                <th>Progress(%)</th>
                                                 <th>Due Date</th>
                                                 <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Trident</td>
-                                                <td>Internet
-                                                    Explorer 4.0</td>
-                                                <td>Win 95+</td>
-                                                <td>q</td>
-                                                <td>q</td>
-                                                <td>q</td>
-                                                <td>q</td>
-                                            </tr>
+                                            <?php
+                                            $sql = "SELECT * FROM task";
+                                            $result = $conn->query($sql);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    echo "<tr>
+                                                <td>" . $row["task_id"] . "</td>
+                                                <td>" . $row["task_title"] . "</td>
+                                                <td>" . $row["task_description"] . "</td>
+                                                <td>" . $row["employee_id"] . "</td>
+                                                <td>" . $row["progress"] . "</td>
+                                                <td>" . $row["due_date"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php'><i class='fa fa-camera'></i></a></td>
+                                            </tr>";
+                                                }
+                                            } else {
+                                                echo '<script>alert("Invalid input !")</script>';
+                                            }
+                                            ?>
 
                                         </tbody>
                                     </table>

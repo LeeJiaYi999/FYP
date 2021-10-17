@@ -62,13 +62,22 @@ include("db_connection.php");
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Trident</td>
-                                                <td>Internet
-                                                    Explorer 4.0</td>
-                                                <td>Win 95+</td>
-                                                <td>v</td>
-                                            </tr>                                           
+                                            <?php
+                                            $sql = "SELECT * FROM announcement";
+                                            $result = $conn->query($sql);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    echo "<tr>
+                                                <td>" . $row["announcement_id"] . "</td>
+                                                <td>" . $row["announcement_description"] . "</td>
+                                                <td>" . $row["post_date"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php'><i class='fa fa-camera'></i></a></td>
+                                                      </tr>";
+                                                }
+                                            } else {
+                                                echo '<script>alert("Invalid input !")</script>';
+                                            }
+                                            ?>                                           
                                         </tbody>
                                     </table>
                                     <div class="box-footer">
@@ -97,17 +106,17 @@ include("db_connection.php");
 
         <!-- page script -->
         <script type="text/javascript">
-                                                    $(function () {
-                                                        $("#example1").dataTable();
-                                                        $('#example2').dataTable({
-                                                            "bPaginate": true,
-                                                            "bLengthChange": false,
-                                                            "bFilter": false,
-                                                            "bSort": true,
-                                                            "bInfo": true,
-                                                            "bAutoWidth": false
-                                                        });
-                                                    });
+                                            $(function () {
+                                                $("#example1").dataTable();
+                                                $('#example2').dataTable({
+                                                    "bPaginate": true,
+                                                    "bLengthChange": false,
+                                                    "bFilter": false,
+                                                    "bSort": true,
+                                                    "bInfo": true,
+                                                    "bAutoWidth": false
+                                                });
+                                            });
         </script>
 
     </body>

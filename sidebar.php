@@ -109,7 +109,7 @@ include("db_connection.php");
                         </ul>
                     </li>
                     <li>
-                        <a href="announcement.php">
+                        <a href="announcementList.php">
                             <i class="fa fa-laptop"></i>
                             <span>Announcement</span>
                         </a>
