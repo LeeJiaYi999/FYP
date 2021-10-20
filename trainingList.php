@@ -71,13 +71,13 @@ include("db_connection.php");
                                                     echo "<tr>
                                                 <td>" . $row["training_id"] . "</td>
                                                 <td>" . $row["training_description"] . "</td>
-                                                <td>" . $row["department"] . "</td>
+                                                <td>" . $row["department_name"] . "</td>
                                                 <td>" . $row["create_date"] . "</td>
                                                 <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php'><i class='fa fa-camera'></i></a></td>
                                             </tr>";
                                                 }
                                             } else {
-                                                echo '<script>alert("Invalid input !")</script>';
+                                                echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>
                                         </tbody>

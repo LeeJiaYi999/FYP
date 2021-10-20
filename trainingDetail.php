@@ -1,6 +1,37 @@
 <?php
 session_start();
 include("db_connection.php");
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $sql = "SELECT * FROM training WHERE training_id = '$id' LIMIT 1";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            $current_data = $row;
+            break;
+        }
+    } else {
+        echo '<script>alert("Extract data error !\nContact IT department for maintainence");window.location.href = "admin_list.php";</script>';
+    }
+} else {
+    
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $sql = "UPDATE training SET employee_id='" . $_POST['eid'] . "',employee_name='" . $_POST['ename'] . "',checkin_time='" . $_POST['cin'] . "',"
+            . "checkout_time='" . $_POST['cout'] . "',status='" . $_POST['status'] . "',attendance_date='" . $_POST['adate'] . "' WHERE attendance_id='" . $_SESSION["attendance_id"] . "'";
+    if ($conn->query($sql)) {
+        $_SESSION["employee_name"] = $_POST['ename'];
+        $_SESSION["checkin_time"] = $_POST['cin'];
+        $_SESSION["checkout_time"] = $_POST['cout'];
+        $_SESSION["status"] = $_POST['status'];
+        $_SESSION["attendance_date"] = $_POST['adate'];
+        echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
+    } else {
+        echo '<script>alert("Update fail !");</script>';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -57,168 +88,185 @@ include("db_connection.php");
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Training ID</label>
-                                                <input type="text" class="form-control" placeholder="training id" disabled/>
+                                                <input type="text" class="form-control" name="training_id" id="training_id" placeholder="training id" disabled/>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Department</label>
-                                                <input type="text" class="form-control" placeholder="department" disabled/>
+                                                <select class="form-control">
+                                                    <?php
+                                                    $sql = "SELECT * FROM department";
+                                                    $result = $conn->query($sql);
+                                                    if ($result->num_rows > 0) {
+                                                        while ($row = mysqli_fetch_array($result)) {
+                                                            echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                        }
+                                                    } else {
+                                                        echo '<script>alert("Invalid input !")</script>';
+                                                    }
+                                                    ?>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Training Description</label>
-                                                <textarea class="form-control" name="address" id="address" rows="3" placeholder="description" disabled></textarea>
+                                                <textarea class="form-control" name="training_description" id="training_description" rows="3" placeholder="description" disabled></textarea>
                                             </div>    
                                         </div>
                                     </div>
                                 </div><!-- /.box-body -->
 
                                 <div class="box-footer">
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>1. </label>
+                                        </div>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
-                                        <label>1. Question</label>
-                                        <input type="text" class="form-control" placeholder="Answer"/>
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>2. </label>
+                                        </div>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
-                                        <label>2. Question</label>
-                                        <input type="text" class="form-control" placeholder="Answer"/>
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>3. </label>
+                                        </div>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
-                                        <label>3. Question</label>
-                                        <input type="text" class="form-control" placeholder="Answer"/>
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>4. </label>
+                                        </div>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
-                                        <label>4. Question</label>
-                                        <input type="text" class="form-control" placeholder="Answer"/>
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>5. </label>
+                                        </div>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
-                                        <label>5. Question</label>
-                                        <input type="text" class="form-control" placeholder="Answer"/>
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
-                                    <div class="form-group"> 
-                                        <label>6.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>6. </label>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
-                                    <div class="form-group"> 
-                                        <label>7.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>7. </label>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
-                                    <div class="form-group"> 
-                                        <label>8.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>8. </label>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
-                                    <div class="form-group"> 
-                                        <label>9.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>9. </label>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
                                     </div>
                                     &nbsp;
 
-                                    <div class="form-group"> 
-                                        <label>10.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            <label>10. </label>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
+                                        <div class="col-xs-11">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="question" id="question" placeholder="Question"/>
+                                            </div>
                                         </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
-                                    </div>    
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="answer" id="answer" placeholder="Answer"/>
+                                    </div>
                                     &nbsp;
 
                                     <div class="row">

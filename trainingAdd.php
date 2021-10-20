@@ -1,14 +1,32 @@
-
 <?php
 session_start();
 include("db_connection.php");
+$sql = "SELECT training_id FROM training ORDER BY training_id DESC LIMIT 1";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = mysqli_fetch_array($result)) {
+        $latestnum = ((int) substr($row['training_id'], 2)) + 1;
+        $newid = "TR{$latestnum}";
+        break;
+    }
+} else {
+    $newid = "TR1001";
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $sql = "INSERT INTO training(training_id, training_description, department_name, assign_date) "
+            . "VALUES ('" . $_POST['training_id'] . "','" . $_POST['training_description'] . "','" . $_POST['department'] . "','" . $_SESSION["date"] . "')";
+    if ($conn->query($sql)) {
+        echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
+    } else {
+        echo '<script>alert("Create Fail !");</script>';
+    }
+}
 ?>
 
-<!DOCTYPE html>
-<html class="bg-black">
+<html>
     <head>
         <meta charset="UTF-8">
-        <title>Add Training Sessions</title>
+        <title>Add Training</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <!-- bootstrap 3.0.2 -->
         <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -31,13 +49,13 @@ include("db_connection.php");
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Training Sessions
+                        Training Session
                         <small>[Add]</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="trainingMain.php">Training Session List</a></li>
-                        <li class="active">Training Sessions Add</li>
+                        <li><a href="employeeMain.php">Training List</a></li>
+                        <li class="active">Add New Training</li>
                     </ol>
                 </section>
 
@@ -49,236 +67,47 @@ include("db_connection.php");
                             <!-- general form elements -->
                             <div class="box box-primary">
                                 <div class="box-header">
-                                    <h3 class="box-title">Training Sessions</h3>
+                                    <h3 class="box-title">Add New Training</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
-                                <!--<form role="form">-->
-                                <div class="box-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Training ID</label>
-                                                <input type="text" class="form-control" placeholder="training id" disabled/>
+                                <form method="post">
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Training ID</label>
+                                                    <input type="text" class="form-control" name="training_id" id="training_id" placeholder="training id" value="<?php echo $newid ?>" readonly/>
+                                                </div>                                         
+                                                <div class="form-group">
+                                                    <label>Department</label>
+                                                    <select class="form-control" name="department">
+                                                        <?php
+                                                        $sql = "SELECT * FROM department";
+                                                        $result = $conn->query($sql);
+                                                        if ($result->num_rows > 0) {
+                                                            while ($row = mysqli_fetch_array($result)) {
+                                                                echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                            }
+                                                        } else {
+                                                            echo '<script>alert("Invalid input !")</script>';
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Training Description</label>
+                                                    <textarea class="form-control" name="training_description" id="training_description" rows="3" placeholder="description" ></textarea>
+                                                </div>    
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Department</label>
-                                                <select class="form-control">
-                                                    <option>Sales</option>
-                                                    <option>Marketing</option>
-                                                    <option>Production</option>
-                                                    <option>Accounting</option>
-                                                    <option>General</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Training Description</label>
-                                                <textarea class="form-control" name="address" id="address" rows="3" placeholder="description" ></textarea>
-                                            </div>    
-                                        </div>
+                                    </div><!-- /.box-body -->
+                                    <div class="box-footer">
+                                        <button type="submit" class="btn btn-primary" onclick="add()" id="btnadd" >Add</button>
                                     </div>
-                                </div><!-- /.box-body -->
-
-                                <div class="box-footer">
-                                    <div class="row">
-                                        <div class="col-xs-1">
-                                            <label>1. </label>
-                                        </div>
-                                        <div class="col-xs-11">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" placeholder="Question"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Answer"/>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="row">
-                                        <div class="col-xs-1">
-                                            <label>2. </label>
-                                        </div>
-                                        <div class="col-xs-11">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" placeholder="Question"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Answer"/>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="row">
-                                        <div class="col-xs-1">
-                                            <label>3. </label>
-                                        </div>
-                                        <div class="col-xs-11">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" placeholder="Question"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Answer"/>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="row">
-                                        <div class="col-xs-1">
-                                            <label>4. </label>
-                                        </div>
-                                        <div class="col-xs-11">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" placeholder="Question"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Answer"/>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="row">
-                                        <div class="col-xs-1">
-                                            <label>5. </label>
-                                        </div>
-                                        <div class="col-xs-11">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" placeholder="Question"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Answer"/>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="form-group"> 
-                                        <label>6.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="form-group"> 
-                                        <label>7.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="form-group"> 
-                                        <label>8.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="form-group"> 
-                                        <label>9.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="form-group"> 
-                                        <label>10.Question</label>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                                                Option one is this and that&mdash;be sure to include why it's great
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                Option two can be something else and selecting it will deselect option one
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                Option three is disabled
-                                            </label>
-                                        </div>
-                                    </div>
-                                    &nbsp;
-
-                                    <div class="col-md-1"><button type="text" class="btn btn-primary" style="width:100%">Add</button></div>
-                                    <div class="col-md-1"><button type="text" class="btn btn-primary" style="width:100%">Cancel</button></div>
-                                </div>
-                                <!--                                </form>-->
+                                </form>
                             </div><!-- /.box -->
                         </div><!--/.col (left) -->
+                        <!-- right column -->
                     </div>   <!-- /.row -->
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
@@ -292,4 +121,5 @@ include("db_connection.php");
 
     </body>
 </html>
+
 

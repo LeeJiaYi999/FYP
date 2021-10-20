@@ -3,7 +3,6 @@ session_start();
 include("db_connection.php");
 ?>
 
-<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -75,11 +74,11 @@ include("db_connection.php");
                                                 <td>" . $row["position"] . "</td>
                                                 <td>" . $row["employee_type"] . "</td>
                                                 <td>" . $row["email"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php'><i class='fa fa-camera'></i></a></td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php?id=".$row["employee_id"]."'><i class='fa fa-camera'></i></a></td>
                                             </tr>";
                                                 }
                                             } else {
-                                                echo '<script>alert("Invalid input !")</script>';
+                                                echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>
 

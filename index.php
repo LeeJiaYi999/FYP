@@ -9,6 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         while ($row = mysqli_fetch_array($result)) {
             $_SESSION["User"] = $row;
+            $_SESSION["date"] = $_POST['date'];
             header("location: home.php");
             exit();
         }
@@ -42,19 +43,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!--test-->
         <div class="form-box" id="login-box">
             <div class="header">Sign In</div>
-            <form  method="post">
+            <form  method="post" id="form">
                 <div class="body bg-gray">
                     <div class="form-group">
                         <input type="text" name="email" class="form-control" placeholder="Email" required="required"/>
                     </div>
                     <div class="form-group">
                         <input type="password" name="password" class="form-control" placeholder="Password" required="required"/>
+                        <input type="text" style="display:none" id="date" name="date"/>
                     </div>          
                 </div>
                 <div class="footer">                                                               
-                    <button type="submit" class="btn bg-olive btn-block">Sign me in</button>  
+                    <button type="button" class="btn bg-olive btn-block" onclick="login()">Sign me in</button>  
 
-                    <p><a href="#">I forgot my password</a></p>
+                    <p><a href="forgetPassword.php">I forgot my password</a></p>
                 </div>
             </form>
 
@@ -76,3 +78,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </body>
 </html>
+<script>
+    function login() {
+        var today = new Date();
+        var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+        document.getElementById("date").value = date;
+        document.getElementById("form").submit();
+    }
+</script>        
+

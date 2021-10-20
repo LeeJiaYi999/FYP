@@ -75,14 +75,14 @@ include("db_connection.php");
                                                 <td>" . $row["project_id"] . "</td>
                                                 <td>" . $row["project_title"] . "</td>
                                                 <td>" . $row["project_description"] . "</td>
-                                                <td>" . $row["department_id"] . "</td>
+                                                <td>" . $row["department_name"] . "</td>
                                                 <td>" . $row["assign_date"] . "</td>
                                                 <td>" . $row["due_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php'><i class='fa fa-camera'></i></a></td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='projectDetail.php?id=".$row["project_id"]."'><i class='fa fa-camera'></i></a></td>
                                                       </tr>";
                                                 }
                                             } else {
-                                                echo '<script>alert("Invalid input !")</script>';
+                                                echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>    
 

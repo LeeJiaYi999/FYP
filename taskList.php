@@ -2,8 +2,13 @@
 <?php
 session_start();
 include("db_connection.php");
+if(isset($_GET["type"])){
+    $sql = "SELECT * FROM task WHERE employee_id = '".$_SESSION['User']['employee_id']."'";
+}else {
+    $sql = "SELECT * FROM task";
+}
 ?>
-<!DOCTYPE html>
+
 <html>
     <head>
         <meta charset="UTF-8">
@@ -57,8 +62,9 @@ include("db_connection.php");
                                         <thead>
                                             <tr>
                                                 <th>Task ID</th>
+                                                <th>Project ID</th>
                                                 <th>Task Title</th>
-                                                <th>Task Description</th>
+                                                <th>Task Description</th>                                                
                                                 <th>Responsible member(s)</th>
                                                 <th>Progress(%)</th>
                                                 <th>Due Date</th>
@@ -67,22 +73,23 @@ include("db_connection.php");
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM task";
+                                            
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
                                                     echo "<tr>
                                                 <td>" . $row["task_id"] . "</td>
+                                                <td>" . $row["project_id"] . "</td>
                                                 <td>" . $row["task_title"] . "</td>
                                                 <td>" . $row["task_description"] . "</td>
                                                 <td>" . $row["employee_id"] . "</td>
                                                 <td>" . $row["progress"] . "</td>
                                                 <td>" . $row["due_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php'><i class='fa fa-camera'></i></a></td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='taskDetail.php?id=".$row["task_id"]."'><i class='fa fa-camera'></i></a></td>
                                             </tr>";
                                                 }
                                             } else {
-                                                echo '<script>alert("Invalid input !")</script>';
+                                                echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>
 

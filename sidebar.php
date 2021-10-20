@@ -168,6 +168,7 @@ include("db_connection.php");
                             }
                             ?>
                             <li><a href="taskList.php"><i class="fa fa-angle-double-right"></i> Task</a></li>
+                            <li><a href="taskList.php?type='1'><i class="fa fa-angle-double-right"></i>Personal Task</a></li>
                         </ul>
                     </li>
                     <li>

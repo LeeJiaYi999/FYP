@@ -1,5 +1,30 @@
-<!DOCTYPE html>
-<html class="bg-black">
+<?php
+session_start();
+include("db_connection.php");
+$sql = "SELECT announcement_id FROM announcement ORDER BY announcement_id DESC LIMIT 1";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = mysqli_fetch_array($result)) {
+        $latestnum = ((int) substr($row['announcement_id'], 1)) + 1;
+        $newid = "A{$latestnum}";
+        break;
+    }
+} else {
+    $newid = "A10001";
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $sql = "INSERT INTO announcement(announcement_id, announcement_description, post_date) VALUES ('" . $_POST['announcement_id'] . "','" . $_POST['announcement_description'] . "','" . $_SESSION["date"] . "')";
+
+    if ($conn->query($sql)) {
+        echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
+    } else {
+        echo '<script>alert("Create Fail !");</script>';
+    }
+}
+?>
+
+<html>
     <head>
         <meta charset="UTF-8">
         <title>Add Project</title>
@@ -46,28 +71,26 @@
                                     <h3 class="box-title">Add New Announcement</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
-                                <form role="form">
+                                <form method="post">
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Announcement ID</label>
-                                                    <input type="projectid" class="form-control" placeholder="project id" disabled/>
-                                                </div>                                               
+                                                    <input type="text" class="form-control" name="announcement_id" id="announcement_id" placeholder="announcement ID" value="<?php echo $newid ?>" readOnly>
+                                                </div>                                           
                                                 <div class="form-group">
                                                     <label>Announcement Description</label>
-                                                    <textarea class="form-control" rows="3" placeholder="Enter description"></textarea>
+                                                    <textarea class="form-control" name="announcement_description" rows="3" placeholder="Enter description"></textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
-                                        <button type="add" class="btn btn-primary">Add</button>
+                                        <button type="submit" class="btn btn-primary" onclick="add()" id="btnadd" >Add</button>
                                     </div>
                                 </form>
-
                             </div><!-- /.box -->
-
                         </div><!--/.col (left) -->
                         <!-- right column -->
                     </div>   <!-- /.row -->
