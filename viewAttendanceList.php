@@ -58,28 +58,46 @@ include("db_connection.php");
                                                 <th>Employee ID</th>
                                                 <th>Employee Name</th>
                                                 <th>Check In</th>
+                                                <th>Status</th>
                                                 <th>Check Out</th>
                                                 <th>Attendance Date</th>
                                                 <th>Tools</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                          
-                                            <tr>
-                                                <td>Trident</td>
-                                                <td>AOL browser (AOL desktop)</td>
-                                                <td>Win XP</td>
-                                                <td>6</td>
-                                                <td>A</td>
-                                                <td><a class="btn btn-warning" style="width: 100%" href="viewAttendanceDetails.php"><i class="fa fa-camera"></i></a></td>
-                                            </tr>
-                                            
+
+                                            <?php
+                                            $sql = "SELECT * FROM attendance";
+                                            $result = $conn->query($sql);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    if($row["status"] === "Late"){
+                                                        $color = "red";
+                                                    }else{
+                                                        $color = "green";
+                                                    }
+                                                    
+                                                    echo "<tr>
+                                                <td>" . $row["employee_id"] . "</td>
+                                                <td>" . $row["employee_name"] . "</td>
+                                                <td>" . $row["checkin_time"] . "</td>
+                                                <td style='color: $color'>" . $row["status"] . "</td>
+                                                <td>" . $row["checkout_time"] . "</td>
+                                                <td>" . $row["attendance_date"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 50%' href='viewAttendanceDetails.php?id=".$row["attendance_id"]."'><i class='fa fa-camera'></i></a>
+                                                </td>
+                                            </tr>";
+                                                }
+                                            } else {
+                                                echo '<script>alert("Invalid input !")</script>';
+                                            }
+                                            ?>                                         
                                         </tbody>
                                     </table>
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="box-footer">
-                                                <a href="#" data-toggle="modal" class="btn btn-primary btn-sm btn-flat"><i class="fa fa-plus"></i> New</a>
+                                                <a href="viewAttendanceAdd.php" class="btn btn-primary btn-sm btn-flat"><i class="fa fa-plus"></i> New</a>
                                             </div>
                                         </div>
                                     </div>

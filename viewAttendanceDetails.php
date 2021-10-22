@@ -1,11 +1,45 @@
 <?php
 session_start();
 include("db_connection.php");
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $sql = "SELECT * FROM attendance WHERE attendance_id = '$id' LIMIT 1";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            $current_data = $row;
+            break;
+        }
+    } else {
+        echo '<script>alert("Successfully!");window.location.href = "home.php";</script>';
+    }
+} else {
+    echo '<script>alert("Fail!");window.location.href = "home.php";</script>';
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_POST['type'] == "update") {
+        $sql = "UPDATE attendance SET checkin_time='" . $_POST['cin'] . "',checkout_time='" . $_POST['cout'] . "',status='" . $_POST['status'] . "',attendance_date='" . $_POST['adate'] . "' WHERE attendance_id='" . $current_data["attendance_id"] . "'";
+        if ($conn->query($sql)) {
+            echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
+        } else {
+            echo '<script>alert("Update fail !")</script>';
+        }
+    } else {
+        $sql = "DELETE FROM `attendance` WHERE `attendance_id` = '" . $current_data["attendance_id"] . "'";
+        if ($conn->query($sql)) {
+            echo '<script>alert("Delete Successfully !");window.location.href = "home.php";</script>';
+        } else {
+            echo '<script>alert("Delete fail !")</script>';
+        }
+    }
+}
 ?>
 
 <html>
-<body> 
-    <html>
+    <body> 
+
     <head>
         <meta charset="UTF-8">
         <title>Attendance Details</title>
@@ -21,17 +55,7 @@ include("db_connection.php");
     </head>
     <body>
 
-        <?php include("sidebar.php");
-        ?>
-        <?php
-//        $attdate = date("d-m-y");
-//        echo $attdate;
-//        echo"<br>";
-//        date_default_timezone_set("Malaysia");
-//        $ctime = date("h:i:s A", time());
-//        echo $ctime;
-//        
-        ?>
+        <?php include("sidebar.php"); ?>
         <div class="wrapper row-offcanvas row-offcanvas-left">
             <aside class="right-side">
 
@@ -46,33 +70,45 @@ include("db_connection.php");
                                     <h3 class="box-title">View Attendance Details</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
-                                <form role="form">
+                                <form method="post" id="form">
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Employee ID</label>
-                                                    <input type="text" class="form-control" name="eid" id="eid">
+                                                    <input type="text" class="form-control" name="eid" id="eid" value="<?php
+                                                    echo $current_data["employee_id"];
+                                                    ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Employee Name</label>
-                                                    <input type="text" class="form-control" name="ename" id="ename">
+                                                    <input type="text" class="form-control" name="ename" id="ename" value="<?php
+                                                    echo $current_data["employee_name"];
+                                                    ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Check In Time</label>
-                                                    <input type="text" class="form-control" name="cin" id="cin">
+                                                    <input type="time" class="form-control" name="cin" id="cin" value="<?php
+                                                    echo $current_data["checkin_time"];
+                                                    ?>" disabled>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Check Out Time</label>
-                                                    <input type="text" class="form-control" name="cout" id="cout">
+                                                    <input type="time" class="form-control" name="cout" id="cout" value="<?php
+                                                    echo $current_data["checkout_time"];
+                                                    ?>" disabled>
                                                 </div> 
                                                 <div class="form-group">
                                                     <label>Status</label>
-                                                    <input type="text" class="form-control" name="status" id="status">
+                                                    <input type="text" class="form-control" name="status" id="status" value="<?php
+                                                    echo $current_data["status"];
+                                                    ?>" disabled>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Attendance Date</label>
-                                                    <input type="text" class="form-control" name="adate" id="adate">
+                                                    <input type="date" class="form-control" name="adate" id="adate" value="<?php
+                                                    echo $current_data["attendance_date"];
+                                                    ?>" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -80,17 +116,16 @@ include("db_connection.php");
                                     </div><!-- /.box-body -->
 
                                     <div class="box-footer">
-                                       <button type="submit" class="btn btn-success btn-flat" name="upload"><i class="fa fa-check-square-o"></i> Update</button>
-                                       <button type="submit" class="btn btn-danger btn-flat" name="delete"><i class="fa fa-trash"></i> Delete</button>
-                                       <button type="button" class="btn btn-default btn-flat pull-left" name="Cancel"><i class="fa fa-close"></i> Cancel</button>
+                                        <input type="text" class="form-control" name="type" id="type" style="display:none" value="update" readonly>
+                                        <button type="button" class="btn btn-success btn-flat" id="btn_modify" onclick="modify()"><i class="fa fa-check-square-o"></i> Modify</button>
+                                        <button type="button" class="btn btn-success btn-flat" id="btn_update" onclick="update()"><i class="fa fa-check-square-o"></i> Update</button>
+                                        <button type="button" class="btn btn-danger btn-flat" id="btn_delete" onclick="remove()"><i class="fa fa-trash"></i> Delete</button>
+                                        <button type="button" class="btn btn-default btn-flat pull-left" id="btn_cancel" onclick="location.href = 'viewAttendanceList.php'"><i class="fa fa-close"></i> Cancel</button>
                                     </div>
                                 </form>
                             </div><!-- /.box -->
-
-
                         </div><!--/.col (left) -->
                         <!-- right column -->
-
                     </div>   <!-- /.row -->
                 </section><!-- /.content -->
             </aside>
@@ -103,5 +138,27 @@ include("db_connection.php");
     </body>
 </html>
 
-    </body>
-</html>
+<script>
+                                            function modify() {
+                                                document.getElementById("cin").disabled = false;
+                                                document.getElementById("cout").disabled = false;
+                                                document.getElementById("status").disabled = false;
+                                            }
+
+                                            function update() {
+                                                if (document.getElementById("cin").value === "" || document.getElementById("cout").value === "" || document.getElementById("status").value === "") {
+                                                    alert("Please fill in the blank !");
+                                                } else {
+                                                    document.getElementById("form").submit();
+                                                }
+                                            }
+
+                                            function remove() {
+                                                if (confirm("Confirm to delete ?")) {
+                                                    document.getElementById("type").value = "delete";
+                                                    document.getElementById("form").submit();
+                                                }
+                                            }
+
+
+</script>
