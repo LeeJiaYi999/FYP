@@ -56,7 +56,7 @@ include("db_connection.php");
                                             <tr>
                                                 <th>Employee ID</th>
                                                 <th>Name</th>
-                                                <th>Position</th>
+                                                <th>Department</th>
                                                 <th>Employee Type</th>
                                                 <th>Email</th>
                                                 <th>View</th>
@@ -71,7 +71,7 @@ include("db_connection.php");
                                                     echo "<tr>
                                                 <td>" . $row["employee_id"] . "</td>
                                                 <td>" . $row["employee_name"] . "</td>
-                                                <td>" . $row["position"] . "</td>
+                                                <td>" . $row["department_name"] . "</td>
                                                 <td>" . $row["employee_type"] . "</td>
                                                 <td>" . $row["email"] . "</td>
                                                 <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php?id=".$row["employee_id"]."'><i class='fa fa-camera'></i></a></td>

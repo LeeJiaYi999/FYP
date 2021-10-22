@@ -42,7 +42,7 @@ include("db_connection.php");
                                         <a href="myProfile.php" class="btn btn-default btn-flat">Profile</a>
                                     </div>
                                     <div class="pull-right">
-                                        <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                        <a href="logOut.php" class="btn btn-default btn-flat">Sign out</a>
                                     </div>
                                 </li>
                             </ul>
@@ -102,7 +102,7 @@ include("db_connection.php");
                             <li><a href="checkOut.php"><i class="fa fa-angle-double-right"></i> Check Out</a></li>
                             <?php
                             if ($_SESSION["User"]["employee_type"] === "Admin") {
-                                echo"<li><a href='viewAttendance.php'><i class='fa fa-angle-double-right'></i> Attendance History</a></li>";
+                                echo"<li><a href='viewAttendanceList.php'><i class='fa fa-angle-double-right'></i> Attendance History</a></li>";
                             }
                             ?>
                             <li><a href="personalAttendance.php"><i class="fa fa-angle-double-right"></i> Personal History</a></li>
@@ -125,7 +125,7 @@ include("db_connection.php");
                     </li>";
                     }
                     ?>
-                    
+
                     <?php
                     if ($_SESSION["User"]["employee_type"] === "Admin") {
                         echo"<li class='treeview'>
@@ -140,7 +140,7 @@ include("db_connection.php");
                     </li>";
                     }
                     ?>
-                    
+
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-table"></i> <span>Leave</span>
@@ -151,9 +151,10 @@ include("db_connection.php");
                             <?php
                             if ($_SESSION["User"]["employee_type"] === "Admin") {
                                 echo"<li><a href='leaveApplication.php'><i class='fa fa-angle-double-right'></i> Leave Application</a></li>";
+                                echo"<li><a href='leaveHistory.php'><i class='fa fa-angle-double-right'></i> Leave History</a></li>";
                             }
                             ?>
-                            <li><a href="leaveHistory.php"><i class="fa fa-angle-double-right"></i> Leave History</a></li>
+                            <li><a href="leavePersonalHistory.php"><i class="fa fa-angle-double-right"></i>Personal Leave History</a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -162,13 +163,28 @@ include("db_connection.php");
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                             <?php
-                            if ($_SESSION["User"]["employee_type"] === "Admin") {
-                                echo"<li><a href='projectList.php'><i class='fa fa-angle-double-right'></i> Project</a></li>";
-                            }
-                            ?>
-                            <li><a href="taskList.php"><i class="fa fa-angle-double-right"></i> Task</a></li>
-                            <li><a href="taskList.php?type='1'><i class="fa fa-angle-double-right"></i>Personal Task</a></li>
+                            <li class="treeview">
+                                <?php
+                                if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                    echo"<li><a href='projectList.php'><i class='fa fa-angle-double-right'></i>Project</a></li>";
+                                }
+                                ?>
+                            </li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-table"></i> <span>Task</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <?php
+                                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                        echo"<li><a href='taskList.php'><i class='fa fa-angle-double-right'></i> All Task</a></li>";
+                                    }
+                                    ?>
+                                    <li><a href="taskList.php?type='1'"><i class="fa fa-angle-double-right"></i>Personal Task</a></li>
+                                </ul>
+                            </li>
+
                         </ul>
                     </li>
                     <li>
@@ -176,10 +192,48 @@ include("db_connection.php");
                             <i class="fa fa-envelope"></i> <span>Payroll</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="trainingList.php">
-                            <i class="fa fa-folder"></i> <span>Training</span>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-table"></i> <span>Training</span>
+                            <i class="fa fa-angle-left pull-right"></i>
                         </a>
+                        <ul class="treeview-menu">
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-table"></i> <span>Training</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <?php
+                                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                        echo"<li><a href='trainingList.php'><i class='fa fa-angle-double-right'></i> All Training</a></li>";
+                                    }
+                                    ?>
+                                    <li><a href="trainingList.php?type='1'"><i class="fa fa-angle-double-right"></i>Personal Training</a></li>
+                                </ul>
+                            </li>
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="fa fa-table"></i> <span>Training Result</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <?php
+                                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                        echo"<li><a href='trainingResultList.php'><i class='fa fa-angle-double-right'></i> All Result</a></li>";
+                                    }
+                                    ?>
+                                    <li><a href="trainingResultList.php?type='1'"><i class="fa fa-angle-double-right"></i>Personal Result</a></li>
+                                </ul>
+                            </li>
+                            <li class="treeview">
+                                <?php
+                                if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                    echo"<li><a href='questionList.php'><i class='fa fa-angle-double-right'></i>Question</a></li>";
+                                }
+                                ?>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </section>

@@ -29,6 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $sql = "DELETE FROM `project` WHERE `project_id`= '" . $current_data['project_id'] . "'";
         if ($conn->query($sql)) {
+            $sql = "DELETE FROM `task` WHERE `project_id`= '" . $current_data['project_id'] . "'";
+            if ($conn->query($sql)) {
+                echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
+            } else {
+                echo '<script>alert("Update fail !");</script>';
+            }
             echo '<script>alert("Delete Successfully !");window.location.href = "home.php";</script>';
         } else {
             echo '<script>alert("Delete fail !");</script>';
@@ -126,7 +132,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         $result = $conn->query($sql);
                                                         if ($result->num_rows > 0) {
                                                             while ($row = mysqli_fetch_array($result)) {
-                                                                echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                                if ($current_data["department_name"] == $row["department_name"]) {
+                                                                    echo "<option value=" . $row["department_name"] . " selected>" . $row["department_name"] . "</option>";
+                                                                } else {
+                                                                    echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                                }
                                                             }
                                                         } else {
                                                             echo '<script>alert("Invalid input !")</script>';
@@ -160,11 +170,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script>
 
             $(document).ready(function () {
-
-                $("form textarea[type=textarea]").prop("readonly", true);
-                $("form input[type=text]").prop("readonly", true);
-                $("form input[type=date]").prop("readonly", true);
-                $("form select[type=select]").prop("readonly", true);
 
                 $("#btnmodify").on("click", function () {
 

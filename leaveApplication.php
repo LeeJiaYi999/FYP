@@ -66,26 +66,28 @@ include("db_connection.php");
                                             </tr>
                                         </thead>
                                         <tbody>
-                                          
-                                            <tr>
-                                                <td>Trident</td>
-                                                <td>AOL browser (AOL desktop)</td>
-                                                <td>Win XP</td>
-                                                <td>6</td>
-                                                <td>A</td>
-                                                <td>GG</td>
-                                                <td>Hh</td>
-                                                <td><a class="btn btn-warning" style="width: 100%" href="leaveApplicationDestails.php"><i class="fa fa-camera"></i></a></td>
+                                            <?php
+                                            $sql = "SELECT * FROM `leave` WHERE `status` = 'Pending'";
+                                            $result = $conn->query($sql);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    echo 
+                                                "<tr><td>".$row["employee_id"]."</td>
+                                                <td>".$row["employee_name"]."</td>
+                                                <td>".$row["leave_day"]."</td>
+                                                <td>".$row["start_date"]."</td>
+                                                <td>".$row["end_date"]."</td>
+                                                <td>".$row["leave_type"]."</td>
+                                                <td>".$row["status"]."</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='leaveApplicationDetails.php?id=".$row["leave_id"]."'><i class='fa fa-camera'></i></a></td></tr>";
+                                                }
+                                            } else {
+                                                echo '<script>alert("No available data !")</script>';
+                                            }
+                                            ?>
                                             
                                         </tbody>
                                     </table>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="box-footer">
-                                                <a href="#" data-toggle="modal" class="btn btn-primary btn-sm btn-flat"><i class="fa fa-plus"></i> New</a>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                 </div><!-- /.box-body -->
                             </div><!-- /.box -->

@@ -39,7 +39,7 @@ include("db_connection.php");
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Personal Attendance</li>
+                        <li class="active">Attendance History</li>
                     </ol>
                 </section>
 
@@ -49,7 +49,7 @@ include("db_connection.php");
                         <div class="col-xs-12">                           
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">Employee Attendance History</h3>                                    
+                                    <h3 class="box-title">All Employee Attendance History</h3>                                    
                                 </div><!-- /.box-header -->
                                 <div class="box-body">
                                     <table id="example1" class="table table-bordered">
@@ -58,19 +58,36 @@ include("db_connection.php");
                                                 <th>Employee ID</th>
                                                 <th>Employee Name</th>
                                                 <th>Check In</th>
+                                                <th>Status</th>
                                                 <th>Check Out</th>
                                                 <th>Attendance Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                          
-                                            <tr>
-                                                <td>Trident</td>
-                                                <td>AOL browser (AOL desktop)</td>
-                                                <td>Win XP</td>
-                                                <td>6</td>
-                                                <td>A</td>
-                                            </tr>                                            
+
+                                            <?php
+                                            $sql = "SELECT * FROM attendance where employee_id = '".$_SESSION["User"]["employee_id"]."'";
+                                            $result = $conn->query($sql);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    if($row["status"] === "Late"){
+                                                        $color = "red";
+                                                    }else{
+                                                        $color = "green";
+                                                    }
+                                                    echo "<tr>
+                                                <td>" . $row["employee_id"] . "</td>
+                                                <td>" . $row["employee_name"] . "</td>
+                                                <td>" . $row["checkin_time"] . "</td>
+                                                <td style='color: $color'>" . $row["status"] . "</td>
+                                                <td>" . $row["checkout_time"] . "</td>
+                                                <td>" . $row["attendance_date"] . "</td>
+                                            </tr>";
+                                                }
+                                            } else {
+                                                echo '<script>alert("Invalid input !")</script>';
+                                            }
+                                            ?>                                         
                                         </tbody>
                                     </table>
                                 </div><!-- /.box-body -->

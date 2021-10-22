@@ -114,12 +114,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         </div>
 
                                     </div>
-                                    <div class="box-footer">
-                                        <button type="button" id="btnmodify" name="btnmodify" class="btn btn-primary">Modify</button>
-                                        <button type="submit" id="btnsave" name="action" class="btn btn-primary" value="save">Save</button>
-                                        <button class="btn btn-primary" name="action" value="delete">Delete</button>
-                                        <button class="btn btn-primary">Cancel</button>
-                                    </div>
+                                    <?php
+                                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                        echo"
+                                    <div class = 'box-footer'>
+                                    <button type = 'button' id = 'btnmodify' name = 'btnmodify' class = 'btn btn-primary'>Modify</button>
+                                    <button type = 'submit' id = 'btnsave' name = 'action' class = 'btn btn-primary' value = 'save'>Save</button>
+                                    <button class = 'btn btn-primary' name = 'action' value = 'delete'>Delete</button>
+                                    <button class = 'btn btn-primary'>Cancel</button>
+                                    </div>";
+                                    }
+                                    ?>
                                 </form>
                             </div><!-- /.box-body -->
                         </div><!-- /.box -->
@@ -137,9 +142,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script>
 
             $(document).ready(function () {
-
-                $("form input[type=textarea]").prop("readonly", true);
-
                 $("#btnmodify").on("click", function () {
 
                     $("textarea[type=textarea]").removeAttr("readonly");
@@ -149,8 +151,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     $("textarea[type=textarea]").prop("readonly", true);
                 })
-
-
             })
         </script>
     </body>

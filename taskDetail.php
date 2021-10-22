@@ -17,12 +17,20 @@ if (isset($_GET['id'])) {
                 $project_data = $row2;
                 break;
             }
+        }else{
+            echo '<script>alert("Extract data error !\nContact IT department for maintainence");";</script>';
         }
     } else {
         echo '<script>alert("Extract data error !\nContact IT department for maintainence");window.location.href = "admin_list.php";</script>';
     }
 } else {
     
+}
+
+if ($_SESSION['User']["employee_type"] === "Admin") {
+    echo '<script>var staff = false;</script>';
+} else {
+    echo '<script>var staff = true;</script>';
 }
 
 $Array_account = array();
@@ -113,8 +121,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     ?>">
                                                 </div>
                                                 <div class="form-group">
+                                                    <label>Project Title</label>
+                                                    <input type="text" class="form-control" name="project_title" id="project_title" placeholder="project title" disabled value="<?php
+                                                    echo $project_data["project_title"];
+                                                    ?>">
+                                                </div>
+                                                <div class="form-group">
                                                     <label>Project Description</label>
-                                                    <textarea class="form-control" name="project_description" id="project_description" rows="3" placeholder="Enter description" readonly ><?php
+                                                    <textarea class="form-control" name="project_description" id="project_description" rows="3" placeholder="Enter description" disabled ><?php
                                                         echo $project_data["project_description"];
                                                         ?></textarea>
                                                 </div>
@@ -127,14 +141,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Employee ID</label>
-                                                            <select class="form-control" type="select" name="employee_id" id="employee_id" onchange="select_id_display_emp()" onclick="select_id_display_emp()" readonly>
+                                                            <select class="form-control" type="select" name="employee_id" id="employee_id" onchange="select_id_display_emp()" onclick="select_id_display_emp()" readonly value="<?php
+                                                            echo $current_data["employee_id"];
+                                                            ?>">
                                                                 <option></option>
                                                                 <?php
                                                                 $sql = "SELECT * FROM employee";
                                                                 $result = $conn->query($sql);
                                                                 if ($result->num_rows > 0) {
                                                                     while ($row = mysqli_fetch_array($result)) {
-                                                                        echo "<option value=" . $row["employee_id"] . ">" . $row["employee_id"] . "</option>";
+                                                                        if ($current_data["employee_id"] == $row["employee_id"]) {
+                                                                            echo "<option value=" . $row["employee_id"] . " selected>" . $row["employee_id"] . "</option>";
+                                                                        } else {
+                                                                            echo "<option value=" . $row["employee_id"] . ">" . $row["employee_id"] . "</option>";
+                                                                        }
                                                                     }
                                                                 } else {
                                                                     echo '<script>alert("Invalid input !")</script>';
@@ -156,7 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                             <label for="projectname">Task Progress</label>
                                                         </div>
                                                         <div class="col-md-2">
-                                                            <input type="text" class="form-control" name="progress"  id="progress" placeholder="%" readonly value="<?php
+                                                            <input type="text" class="form-control" name="progress"  id="progress" placeholder="%" disabled value="<?php
                                                             echo $current_data["progress"];
                                                             ?>">
                                                         </div>
@@ -185,7 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         echo $current_data["task_description"];
                                                         ?></textarea>
                                                 </div>
-                                                 <div class="from-group">
+                                                <div class="from-group">
                                                     <label>Assign Date</label>
                                                     <input type="date" class="form-control" name="assign_date" id="assign_date" placeholder="assign date" readonly value="<?php
                                                     echo $current_data["assign_date"];
@@ -203,7 +223,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <div class="box-footer">
                                         <button type="button" id="btnmodify" name="btnmodify" class="btn btn-primary">Modify</button>
                                         <button type="submit" id="btnsave" name="action" class="btn btn-primary" value="save">Save</button>
-                                        <button class="btn btn-primary" name="action" value="delete">Delete</button>
+                                        <?php
+                                        if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                            echo"
+                                        <button class='btn btn-primary' name='action' value='delete'>Delete</button>";
+                                        }
+                                        ?>
                                         <button class="btn btn-primary">Cancel</button>
                                     </div>
                                 </form>
@@ -224,25 +249,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                                                 $(document).ready(function () {
 
-                                                                    $("form textarea[type=textarea]").prop("readonly", true);
-                                                                    $("form input[type=text]").prop("readonly", true);
-                                                                    $("form input[type=date]").prop("readonly", true);
-                                                                    $("form select[type=select]").prop("readonly", true);
-
                                                                     $("#btnmodify").on("click", function () {
-
-                                                                        $("textarea[type=textarea]").removeAttr("readonly");
-                                                                        $("input[type=text]").removeAttr("readonly");
-                                                                        $("input[type=date]").removeAttr("readonly");
-                                                                        $("select[type=select]").removeAttr("readonly");
+                                                                        if (staff) {
+                                                                            document.getElementById("progress").disabled = false;
+                                                                        } else {
+                                                                            document.getElementById("progress").disabled = false;
+                                                                            $("textarea[type=textarea]").removeAttr("readonly");
+                                                                            $("input[type=text]").removeAttr("readonly");
+                                                                            $("input[type=date]").removeAttr("readonly");
+                                                                            $("select[type=select]").removeAttr("readonly");
+                                                                        }
                                                                     })
 
                                                                     $("#btnsave").on("click", function () {
-
                                                                         $("textarea[type=textarea]").prop("readonly", true);
                                                                         $("input[type=text]").prop("readonly", true);
                                                                         $("input[type=date]").prop("readonly", true);
                                                                         $("select[type=select]").prop("readonly", true);
+//                                                                       
                                                                     })
 
 

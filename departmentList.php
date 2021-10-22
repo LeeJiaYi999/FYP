@@ -25,7 +25,7 @@ include("db_connection.php");
         <?php
         include("sidebar.php");
         ?>
-        
+
         <div class="wrapper row-offcanvas row-offcanvas-left">
 
             <!-- Right side column. Contains the navbar and content of the page -->
@@ -55,19 +55,28 @@ include("db_connection.php");
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Department ID</th>
                                                 <th>Department Name</th>
+                                                <th>Department Description</th>
                                                 <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Trident</td>
-                                                <td>Internet
-                                                    Explorer 4.0</td>
-                                                <td></td>
-                                            </tr>
-                                            
+                                            <?php
+                                            $sql = "SELECT * FROM department";
+                                            $result = $conn->query($sql);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    echo "<tr>
+                                                <td>" . $row["department_name"] . "</td>
+                                                <td>" . $row["department_description"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='departmentDetails.php'><i class='fa fa-camera'></i></a></td>
+                                            </tr>";
+                                                }
+                                            } else {
+                                                echo '<script>alert("Invalid input !")</script>';
+                                            }
+                                            ?>
+
                                         </tbody>
                                     </table>
                                 </div><!-- /.box-body -->
@@ -95,17 +104,17 @@ include("db_connection.php");
 
         <!-- page script -->
         <script type="text/javascript">
-            $(function () {
-                $("#example1").dataTable();
-                $('#example2').dataTable({
-                    "bPaginate": true,
-                    "bLengthChange": false,
-                    "bFilter": false,
-                    "bSort": true,
-                    "bInfo": true,
-                    "bAutoWidth": false
-                });
-            });
+                                        $(function () {
+                                            $("#example1").dataTable();
+                                            $('#example2').dataTable({
+                                                "bPaginate": true,
+                                                "bLengthChange": false,
+                                                "bFilter": false,
+                                                "bSort": true,
+                                                "bInfo": true,
+                                                "bAutoWidth": false
+                                            });
+                                        });
         </script>
 
     </body>

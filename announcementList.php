@@ -70,7 +70,7 @@ include("db_connection.php");
                                                 <td>" . $row["announcement_id"] . "</td>
                                                 <td>" . $row["announcement_description"] . "</td>
                                                 <td>" . $row["post_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='announcementDetails.php?id=".$row["announcement_id"]."'><i class='fa fa-camera'></i></a></td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='announcementDetails.php?id=" . $row["announcement_id"] . "'><i class='fa fa-camera'></i></a></td>
                                                       </tr>";
                                                 }
                                             } else {
@@ -79,13 +79,15 @@ include("db_connection.php");
                                             ?>                                           
                                         </tbody>
                                     </table>
-                                    <div class="box-footer">
+                                    <div class="box-footer" <?php if ($_SESSION['User']['employee_type'] !== "Admin"){echo "style='display:none'";}?>>
                                         <label>Add a new announcement?</label>
                                         <button class="btn btn-primary" onclick="location.href = 'announcementAdd.php'">Add</button>
                                     </div>
-                                </div><!-- /.box-body -->
-                            </div><!-- /.box -->
-                        </div>
+                                                             
+                                </div>
+                            </div><!-- /.box-body -->
+                        </div><!-- /.box -->
+                    </div>
                     </div>
 
                 </section><!-- /.content -->

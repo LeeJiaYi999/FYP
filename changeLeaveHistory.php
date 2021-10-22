@@ -19,10 +19,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($_POST['status'] == "Approve") {
             $sql = "UPDATE `employee` SET `leave_available`=`leave_available` - " . $_POST['leave_day'] . " WHERE `employee_id` = '" . $_POST['eid'] . "'";
             $conn->query($sql);
+        }else{
+            $sql = "UPDATE `employee` SET `leave_available`=`leave_available` + " . $_POST['leave_day'] . " WHERE `employee_id` = '" . $_POST['eid'] . "'";
+            $conn->query($sql);
         }
         echo '<script>alert("Submit successfully\n Back to home page !");window.location.href = "home.php";</script>';
     } else {
-        echo '<script>alert("Update fail !");</script>';
+        echo '<script>alert("Update fail !");window.location.href = "home.php";</script>';
     }
 }
 ?>
@@ -59,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <h3 class="box-title">Leave Application Details</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
-                                <form role="form" method="post">
+                                <form role="form" method="post" id="form">
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-md-6">
@@ -132,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </div><!-- /.box-body -->
 
                                     <div class="box-footer">
-                                        <button type="submit" class="btn btn-success btn-flat" onclick="submit()"><i class="fa fa-check-square-o"></i> Submit</button>
+                                        <button type="button" class="btn btn-success btn-flat" onclick="update()"><i class="fa fa-check-square-o"></i> Update</button>
                                     </div>
                                 </form>
                             </div><!-- /.box -->
@@ -152,7 +155,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
         
         <script>
-        function submit(){
+        function update(){
             if(document.getElementById("status").value === ""){
                     alert("Please fill up all the input !");
                 }else{

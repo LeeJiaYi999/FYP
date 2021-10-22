@@ -1,7 +1,11 @@
-
 <?php
 session_start();
 include("db_connection.php");
+if (isset($_GET["type"])) {
+    $sql = "SELECT * FROM training WHERE department_name = '" . $_SESSION['User']['department_name'] . "'";
+} else {
+    $sql = "SELECT * FROM training";
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -64,7 +68,6 @@ include("db_connection.php");
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM training";
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
@@ -73,7 +76,14 @@ include("db_connection.php");
                                                 <td>" . $row["training_description"] . "</td>
                                                 <td>" . $row["department_name"] . "</td>
                                                 <td>" . $row["create_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php'><i class='fa fa-camera'></i></a></td>
+                                                <td><div class='row'>
+                                                <div class='col-md-6'>
+                                                    <a class='btn btn-warning' style='width: 100%' href='trainingDetail.php?id=" . $row["training_id"] . "'><i class='fa fa-camera'></i></a>
+                                                </div>
+                                                <div class='col-md-6'>
+                                                    <a class='btn btn-warning' style='width: 100%' href='questionDisplay.php?id=" . $row["training_id"] . "'><i class='fa fa-edit'></i></a>
+                                                </div>
+                                                </div></td>
                                             </tr>";
                                                 }
                                             } else {
@@ -82,7 +92,7 @@ include("db_connection.php");
                                             ?>
                                         </tbody>
                                     </table>            
-                                    <div class="box-footer">
+                                    <div class="box-footer" <?php if ($_SESSION['User']['employee_type'] !== "Admin"){echo "style='display:none'";}?>>
                                         <label>Add a new training session?</label>
                                         <button class="btn btn-primary" onclick="location.href = 'trainingAdd.php'">Add</button>
                                     </div>

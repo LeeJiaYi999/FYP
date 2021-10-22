@@ -19,8 +19,8 @@ if (isset($_GET['id'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($_POST['action'] == "save") {
-        $sql = "UPDATE employee SET employee_name='" . $_POST['ename'] . "',image=null,leave_available='" . $_POST['leave'] . "',salary_amount='" . $_POST['salary'] . "',department_name='" . $_POST['department'] . "',"
-                . "ic_no='" . $_POST['ic'] . "',email='" . $_POST['email'] . "',phone_no='" . $_POST['phone'] . "',address='" . $_POST['address'] . "',employee_type='" . $_POST['employee_type'] . "',birth_date='" . $_POST['bdate'] . "' WHERE employee_id='" . $current_data['employee_id'] . "'";
+        $sql = "UPDATE employee SET employee_name='" . $_POST['employee_name'] . "',image=null,leave_available='" . $_POST['leave'] . "',salary_amount='" . $_POST['salary'] . "',department_name='" . $_POST['department'] . "',"
+                . "ic_no='" . $_POST['ic'] . "',email='" . $_POST['email'] . "',gender='" . $_POST['gender'] . "',phone_no='" . $_POST['phone'] . "',address='" . $_POST['address'] . "',employee_type='" . $_POST['employee_type'] . "',birth_date='" . $_POST['bdate'] . "' WHERE employee_id='" . $current_data['employee_id'] . "'";
         if ($conn->query($sql)) {
             echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
         } else {
@@ -126,11 +126,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Employee Type</label>
-                                                    <select type="select" class="form-control" name="employee_type" readonly value="<?php
-                                                    echo $current_data["employee_type"];
-                                                    ?>">
-                                                        <option>Admin</option>
-                                                        <option>Employee</option>
+                                                    <select type="select" class="form-control" name="employee_type" readonly>
+                                                        <?php
+                                                        $sql = "SELECT * FROM employee WHERE employee_id = '$id' LIMIT 1";
+                                                        $result = $conn->query($sql);
+                                                        if ($result->num_rows > 0) {
+                                                            while ($row = mysqli_fetch_array($result)) {
+                                                                echo "<option value=" . $row["employee_type"] . " selected>" . $row["employee_type"] . "</option>";
+                                                            }
+                                                            if ($current_data["employee_type"] == "Admin") {
+                                                                echo "<option>Employee</option>";
+                                                            } else {
+                                                                echo "<option>Admin</option>";
+                                                            }
+                                                        } else {
+                                                            echo '<script>alert("Invalid input !")</script>';
+                                                        }
+                                                        ?>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
@@ -143,11 +155,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Gender</label>
-                                                    <select type="select" class="form-control" name="gender" id="gender" readonly value="<?php
-                                                    echo $current_data["gender"];
-                                                    ?>">
-                                                        <option>Male</option>
-                                                        <option>Female</option>
+                                                    <select type="select" class="form-control" name="gender" id="gender" readonly>
+                                                        <?php
+                                                        $sql = "SELECT * FROM employee WHERE employee_id = '$id' LIMIT 1";
+                                                        $result = $conn->query($sql);
+                                                        if ($result->num_rows > 0) {
+                                                            while ($row = mysqli_fetch_array($result)) {
+                                                                echo "<option value=" . $row["gender"] . " selected>" . $row["gender"] . "</option>";
+                                                            }
+                                                            if ($current_data["gender"] == "Male") {
+                                                                echo "<option>Female</option>";
+                                                            } else {
+                                                                echo "<option>Male</option>";
+                                                            }
+                                                        } else {
+                                                            echo '<script>alert("Invalid input !")</script>';
+                                                        }
+                                                        ?>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
@@ -177,7 +201,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         $result = $conn->query($sql);
                                                         if ($result->num_rows > 0) {
                                                             while ($row = mysqli_fetch_array($result)) {
-                                                                echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                                if ($current_data["department_name"] == $row["department_name"]) {
+                                                                    echo "<option value=" . $row["department_name"] . " selected>" . $row["department_name"] . "</option>";
+                                                                } else {
+                                                                    echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                                }
                                                             }
                                                         } else {
                                                             echo '<script>alert("Invalid input !")</script>';
@@ -225,11 +253,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script>
 
             $(document).ready(function () {
-
-                $("form textarea[type=textarea]").prop("readonly", true);
-                $("form input[type=text]").prop("readonly", true);
-                $("form input[type=date]").prop("readonly", true);
-                $("form select[type=select]").prop("readonly", true);
 
                 $("#btnmodify").on("click", function () {
 

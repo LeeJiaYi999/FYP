@@ -1,20 +1,18 @@
 <?php
 session_start();
 include("db_connection.php");
-$sql = "SELECT department_id FROM department ORDER BY department_id DESC LIMIT 1";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "INSERT INTO department(department_name, department_description) "
-            . "VALUES ('" . $_POST['departmentname'] . "','" . $_POST['departmentdescription'] . "')";
+    $sql = "UPDATE department SET department_name='" . $_POST['departmentname'] . "',department_description='" . $_POST['departmentdescription'] . "' WHERE 1";
     if ($conn->query($sql)) {
-        echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
-
-    }else{
-        echo '<script>alert("Create Fail !");</script>';
+        $_SESSION["department_name"] = $_POST['departmentname'];
+        $_SESSION["department_description"] = $_POST['departmentdescription'];
+        echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
+    } else {
+        echo '<script>alert("Update fail !");</script>';
     }
 }
 ?>
 
-<!DOCTYPE html>
 <html class="bg-black">
     <head>
         <meta charset="UTF-8">
@@ -66,22 +64,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="departmentid">Department ID</label>
-                                                    <input type="text" class="form-control" name="departmentid" id="departmentid" placeholder="Enter department id" readOnly>
-                                                </div>
-                                                <div class="form-group">
                                                     <label for="departmentname">Department Name</label>
-                                                    <input type="text" class="form-control" name="departmentname" id="departmentname" placeholder="Enter department name">
+                                                    <input type="text" class="form-control" name="departmentname" id="departmentname" placeholder="Enter department name" required="required" 
+                                                           value="<?php
+                                                           echo $_SESSION["department_name"];
+                                                           ?>">
                                                 </div>        
                                                 <div class="form-group">
                                                     <label>Department Description</label>
-                                                    <textarea class="form-control" name="departmentdescription" id="departmentdescription" rows="3" placeholder="Enter description"></textarea>
+                                                    <textarea class="form-control" name="departmentdescription" id="departmentdescription" rows="3" placeholder="Enter description" required="required" 
+                                                           value="<?php
+                                                           echo $_SESSION["department_description"];
+                                                           ?>"></textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
-                                            <button type="submit" class="btn btn-primary">Add</button>
+                                            <button type="add" class="btn btn-primary">Add</button>
                                     </div>
                                 </form>
 

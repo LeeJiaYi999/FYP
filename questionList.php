@@ -1,18 +1,12 @@
-
 <?php
 session_start();
 include("db_connection.php");
-if (isset($_GET["type"])) {
-    $sql = "SELECT * FROM task WHERE employee_id = '" . $_SESSION['User']['employee_id'] . "'";
-} else {
-    $sql = "SELECT * FROM task";
-}
 ?>
 
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Task List</title>
+        <title>Question List</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <!-- bootstrap 3.0.2 -->
         <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -39,12 +33,12 @@ if (isset($_GET["type"])) {
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Task List Table
+                        Question List Table
                         <small>[List]</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Task List Table</li>
+                        <li class="active">Question List Table</li>
                     </ol>
                 </section>
 
@@ -54,37 +48,32 @@ if (isset($_GET["type"])) {
                         <div class="col-xs-12">                           
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">Available Task List</h3>    
+                                    <h3 class="box-title">Available Question List</h3>    
                                 </div><!-- /.box-header -->
 
                                 <div class="box-body table-responsive">
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Task ID</th>
-                                                <th>Project ID</th>
-                                                <th>Task Title</th>
-                                                <th>Task Description</th>                                                
-                                                <th>Responsible member(s)</th>
-                                                <th>Progress(%)</th>
-                                                <th>Due Date</th>
+                                                <th>Training ID</th>
+                                                <th>Question ID</th>
+                                                <th>Question Description</th>
+                                                <th>Answer</th>                                                
                                                 <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
+                                            $sql = "SELECT * FROM question";
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
                                                     echo "<tr>
-                                                <td>" . $row["task_id"] . "</td>
-                                                <td>" . $row["project_id"] . "</td>
-                                                <td>" . $row["task_title"] . "</td>
-                                                <td>" . $row["task_description"] . "</td>
-                                                <td>" . $row["employee_id"] . "</td>
-                                                <td>" . $row["progress"] . "</td>
-                                                <td>" . $row["due_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='taskDetail.php?id=" . $row["task_id"] . "'><i class='fa fa-camera'></i></a></td>
+                                                <td>" . $row["training_id"] . "</td>
+                                                <td>" . $row["question_id"] . "</td>
+                                                <td>" . $row["question_description"] . "</td>
+                                                <td>" . $row["answer"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='questionDetail.php?id=".$row["question_id"]."'><i class='fa fa-camera'></i></a></td>
                                             </tr>";
                                                 }
                                             } else {
@@ -95,12 +84,10 @@ if (isset($_GET["type"])) {
                                         </tbody>
                                     </table>
                                 </div><!-- /.box-body -->
-                                <div class = 'box-footer' <?php if ($_SESSION['User']['employee_type'] !== "Admin"){echo "style='display:none'";}?>>
-                                    <label>Create a new project?</label>
-                                    <button class = 'btn btn-primary' onclick = 'location.href = "taskAdd.php"'>Add</button>
+                                <div class="box-footer">
+                                    <label>Create a new question?</label>
+                                    <button class="btn btn-primary" onclick="location.href = 'questionAdd.php'">Add</button>
                                 </div>
-                               
-
                             </div><!-- /.box -->
                         </div>
                     </div>
@@ -122,19 +109,18 @@ if (isset($_GET["type"])) {
 
         <!-- page script -->
         <script type="text/javascript">
-            $(function () {
-                $("#example1").dataTable();
-                $('#example2').dataTable({
-                    "bPaginate": true,
-                    "bLengthChange": false,
-                    "bFilter": false,
-                    "bSort": true,
-                    "bInfo": true,
-                    "bAutoWidth": false
-                });
-            });
+                                        $(function () {
+                                            $("#example1").dataTable();
+                                            $('#example2').dataTable({
+                                                "bPaginate": true,
+                                                "bLengthChange": false,
+                                                "bFilter": false,
+                                                "bSort": true,
+                                                "bInfo": true,
+                                                "bAutoWidth": false
+                                            });
+                                        });
         </script>
 
     </body>
 </html>
-

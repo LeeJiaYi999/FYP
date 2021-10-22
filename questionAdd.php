@@ -1,24 +1,32 @@
 <?php
 session_start();
 include("db_connection.php");
-$sql = "SELECT department_id FROM department ORDER BY department_id DESC LIMIT 1";
+$sql = "SELECT question_id FROM question ORDER BY question_id DESC LIMIT 1";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = mysqli_fetch_array($result)) {
+        $latestnum = ((int) substr($row['question_id'], 1)) + 1;
+        $newid = "Q{$latestnum}";
+        break;
+    }
+} else {
+    $newid = "Q1001";
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "INSERT INTO department(department_name, department_description) "
-            . "VALUES ('" . $_POST['departmentname'] . "','" . $_POST['departmentdescription'] . "')";
+    $sql = "INSERT INTO question(question_id, question_description, training_id, answer) "
+            . "VALUES ('" . $_POST['question_id'] . "','" . $_POST['question_description'] . "','" . $_POST['training_id'] . "','" . $_POST['answer'] . "')";
     if ($conn->query($sql)) {
         echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
-
-    }else{
+    } else {
         echo '<script>alert("Create Fail !");</script>';
     }
 }
 ?>
 
-<!DOCTYPE html>
-<html class="bg-black">
+<html>
     <head>
         <meta charset="UTF-8">
-        <title>Add Department</title>
+        <title>Add Question</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <!-- bootstrap 3.0.2 -->
         <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -41,12 +49,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Department
+                        Question
                         <small>[Add]</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Add New Department</li>
+                        <li><a href="questionList.php">Question List</a></li>
+                        <li class="active">Add New Question</li>
                     </ol>
                 </section>
 
@@ -58,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <!-- general form elements -->
                             <div class="box box-primary">
                                 <div class="box-header">
-                                    <h3 class="box-title">Add Department</h3>
+                                    <h3 class="box-title">Add New Question</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
                                 <form method="post">
@@ -66,28 +75,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="departmentid">Department ID</label>
-                                                    <input type="text" class="form-control" name="departmentid" id="departmentid" placeholder="Enter department id" readOnly>
-                                                </div>
+                                                    <label>Training ID</label>
+                                                    <select class="form-control" name="training_id" id="training_id">
+                                                        <?php
+                                                        $sql = "SELECT * FROM training";
+                                                        $result = $conn->query($sql);
+                                                        if ($result->num_rows > 0) {
+                                                            while ($row = mysqli_fetch_array($result)) {
+                                                                echo "<option value=" . $row["training_id"] . ">" . $row["training_id"] . "</option>";
+                                                            }
+                                                        } else {
+                                                            echo '<script>alert("Invalid input !")</script>';
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div> 
                                                 <div class="form-group">
-                                                    <label for="departmentname">Department Name</label>
-                                                    <input type="text" class="form-control" name="departmentname" id="departmentname" placeholder="Enter department name">
-                                                </div>        
+                                                    <label>Question ID</label>
+                                                    <input type="text" class="form-control" name="question_id" id="question_id" placeholder="question id" value="<?php echo $newid ?>" readonly/>
+                                                </div>                                         
                                                 <div class="form-group">
-                                                    <label>Department Description</label>
-                                                    <textarea class="form-control" name="departmentdescription" id="departmentdescription" rows="3" placeholder="Enter description"></textarea>
-                                                </div>
+                                                    <label>Question Description</label>
+                                                    <textarea class="form-control" name="question_description" id="question_description" rows="3" placeholder="description" ></textarea>
+                                                </div> 
+                                                <div class="form-group">
+                                                    <label>Answer</label>
+                                                    <textarea class="form-control" name="answer" id="answer" rows="3" placeholder="description" ></textarea>
+                                                </div> 
                                             </div>
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
-                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        <button type="submit" class="btn btn-primary" onclick="add()" id="btnadd" >Add</button>
                                     </div>
                                 </form>
-
                             </div><!-- /.box -->
-
-
                         </div><!--/.col (left) -->
                         <!-- right column -->
                     </div>   <!-- /.row -->
@@ -103,4 +125,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </body>
 </html>
-

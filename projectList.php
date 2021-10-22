@@ -78,7 +78,7 @@ include("db_connection.php");
                                                 <td>" . $row["department_name"] . "</td>
                                                 <td>" . $row["assign_date"] . "</td>
                                                 <td>" . $row["due_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='projectDetail.php?id=".$row["project_id"]."'><i class='fa fa-camera'></i></a></td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='projectDetail.php?id=" . $row["project_id"] . "'><i class='fa fa-camera'></i></a></td>
                                                       </tr>";
                                                 }
                                             } else {

@@ -11,6 +11,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["User"]["email"] = $_POST['email'];
         $_SESSION["User"]["phone_no"] = $_POST['phone'];
         $_SESSION["User"]["address"] = $_POST['address'];
+        $sql = "UPDATE `attendance` SET employee_name='" . $_POST['ename'] . "' WHERE employee_id='" . $_SESSION["User"]["employee_id"] . "'";
+        $conn->query($sql);
+        $sql = "UPDATE `leave` SET employee_name='" . $_POST['ename'] . "' WHERE employee_id='" . $_SESSION["User"]["employee_id"] . "'";
+        $conn->query($sql);
         echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
     } else {
         echo '<script>alert("Update fail !");</script>';

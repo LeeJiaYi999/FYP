@@ -107,8 +107,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <div class="form-group">
                                                     <label>Gender</label>
                                                     <select class="form-control" name="gender">
-                                                        <option value="male">Male</option>
-                                                        <option value="female">Female</option>
+                                                        <option value="Male">Male</option>
+                                                        <option value="Female">Female</option>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
@@ -195,6 +195,103 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 var image = document.getElementById('img_display');
                                                 image.src = URL.createObjectURL(event.target.files[0]);
                                             };
+                                            
+//                                            function add() {
+//                                                if (document.getElementById("btnsave").textContent === "Save") {
+//                                                    var correct = true;
+//                                                    var prompt_message = "";
+//                                                    document.getElementById("eid").value = "";
+//                                                    document.getElementById("ename").value = "";
+//                                                    document.getElementById("password").value = "";
+//                                                    document.getElementById("ic").value = "";
+//                                                    document.getElementById("gender").value = "";
+//                                                    document.getElementById("etype").value = "";
+//                                                    document.getElementById("email").value = "";
+//                                                    document.getElementById("position").value = "";
+//                                                    document.getElementById("bdate").value = "";
+//                                                    document.getElementById("phone").value = "";
+//                                                    document.getElementById("leave").value = "";
+//                                                    document.getElementById("salary").value = "";
+//                                                    document.getElementById("dname").value = "";
+//                                                    document.getElementById("address").value = "";
+//
+//                                                    if (!document.getElementById("eid").value || document.getElementById("eid").value === "") {
+//                                                        correct = false;
+//                                                    }
+//                                                    if (!document.getElementById("ename").value || document.getElementById("ename").value === "") {
+//                                                        correct = false;
+//                                                    }
+//                                                    if (document.getElementById("ic").value) {
+//                                                        var ic_number = /^[0-9]{6}-[0-9]{2}-[0-9]{4}$/;
+//                                                        if (!document.getElementById("ic").value.match(ic_number)) {
+//                                                            correct = false;
+//                                                            prompt_message += "Invalid IC Number input!\n"
+//                                                        }
+//                                                    } else {
+//                                                        correct = false;
+//                                                        prompt_message += "Please enter correct ic number!\n"
+//                                                    }
+//                                                    if (document.getElementById("password").value.length < 6) {
+//                                                        prompt_message += "Password must more than 6 alphapet or digit!\n"
+//                                                        correct = false;
+//                                                    }
+//                                                    if (document.getElementById("phone").value) {
+//                                                        var phone_number = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+//                                                        if (!document.getElementById("phone").value.match(phone_number)) {
+//                                                            correct = false;
+//                                                            prompt_message += "Invalid phone number input !\n";
+//                                                        }
+//                                                    } else {
+//                                                        correct = false;
+//                                                        prompt_message += "Please enter correct phone number!\n"
+//                                                    }
+//                                                    if (!document.getElementById("gender").value || document.getElementById("gender").value === "") {
+//                                                        correct = false;
+//                                                    }
+//                                                    if (!document.getElementById("etype").value || document.getElementById("etype").value === "") {
+//                                                        correct = false;
+//                                                    }
+//                                                    if (document.getElementById("email").value) {
+//                                                        var email = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)$/;
+//                                                        if (!document.getElementById("email").value.match(email)) {
+//                                                            correct = false;
+//                                                            prompt_message += "Invalid email input !\n";
+//                                                        }
+//                                                    } else {
+//                                                        correct = false;
+//                                                        prompt_message += "Please enter correct email!\n"
+//                                                    }
+//                                                    if (!document.getElementById("position").value || document.getElementById("position").value === "") {
+//                                                        correct = false;
+//                                                    }
+//                                                    if (!document.getElementById("bdate").value || document.getElementById("bdate").value === "") {
+//                                                        correct = false;
+//                                                    }
+//                                                    if (document.getElementById("leave").value) {
+//                                                        var leave_number = /^[0-9]+$/;
+//                                                        if (!document.getElementById("leave").value.match(leave_number)) {
+//                                                            fullfill = false;
+//                                                            prompt_message += "Invalid leave number input !\n";
+//                                                        }
+//                                                    } else {
+//                                                        correct = false;
+//                                                        prompt_message += "Please number only!\n"
+//                                                    }
+//
+//                                                }
+//                                                if (!document.getElementById("salary").value || document.getElementById("salary").value === "") {
+//                                                    correct = false;
+//                                                }
+//                                                if (!document.getElementById("dname").value || document.getElementById("dname").value === "") {
+//                                                    correct = false;
+//                                                }
+//                                                if (!document.getElementById("address").value || document.getElementById("address").value === "") {
+//                                                    correct = false;
+//                                                }
+//                                            }
+//                                            else {
+//                                                alert("Inputs the correct and all field !\n" + prompt_message);
+//                                            }
         </script>
     </body>
 </html>

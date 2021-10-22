@@ -1,6 +1,31 @@
 <?php
 session_start();
 include("db_connection.php");
+
+$sql = "SELECT * FROM attendance WHERE employee_id = '" . $_SESSION["User"]["employee_id"] . "' AND attendance_date = '" . $_SESSION["date"] . "' LIMIT 1";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while ($row = mysqli_fetch_array($result)) {
+        if ($row["checkout_time"] === "" || !$row["checkout_time"]) {
+            $logOut = true;
+        } else {
+            $logOut = false;
+        }
+        $data = $row;
+        break;
+    }
+} else {
+    echo '<script>alert("You have no yet Check In\n Back to home page !");window.location.href = "home.php";</script>';
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $sql = "UPDATE `attendance` SET checkout_time= '" . $_POST['checkout'] . "' WHERE 1";
+    if ($conn->query($sql)) {
+        echo '<script>alert("Check Out successfully\n Back to home page !");window.location.href = "home.php";</script>';
+    } else {
+        echo '<script>alert("Check Out fail !");</script>';
+    }
+}
 ?>
 
 <html>
@@ -20,15 +45,6 @@ include("db_connection.php");
     <body>
 
         <?php include("sidebar.php");
-        ?>
-        <?php
-//        $attdate = date("d-m-y");
-//        echo $attdate;
-//        echo"<br>";
-//        date_default_timezone_set("Malaysia");
-//        $ctime = date("h:i:s A", time());
-//        echo $ctime;
-//        
         ?>
         <div class="wrapper row-offcanvas row-offcanvas-left">
             <aside class="right-side">
@@ -52,28 +68,45 @@ include("db_connection.php");
                             <!-- general form elements -->
                             <div class="box box-primary">
                                 <div class="box-header">
-                                    <h3 class="box-title">Check Out Attendance Form</h3>
+                                    <h3 class="box-title">Check Out Attendance Form </h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
-                                <form role="form">
+                                <form role="form" id="form" method="post">
                                     <div class="box-body">
                                         <div class="row">
+                                            <div class="col-md-3"></div>
                                             <div class="col-md-6">
-                                                <div class="form-group">
+                                                <div class="form-group" style="text-align: center">
                                                     <label>Check In Time</label>
-                                                    <input type="text" class="form-control" name="checkin" id="checkin" placeholder="Check In Time" disabled/>
+                                                    <input style="text-align: center" type="text" class="form-control" name="checkin" id="checkin" placeholder="Check In Time" value="<?php
+                                                    if (isset($data)) {
+                                                        echo $data["checkin_time"];
+                                                    }
+                                                    ?>" readOnly/>
                                                 </div>                                            
-                                                <div class="form-group">
+                                                <div class="form-group" style="text-align: center">
                                                     <label>Status</label>
-                                                    <input type="text" class="form-control" name="status" id="status" placeholder="Status" disabled/>
+                                                    <input style="text-align: center" type="text" class="form-control" name="status" id="status" placeholder="Status" value="<?php
+                                                    if (isset($data)) {
+                                                        echo $data["status"];
+                                                    }
+                                                    ?>" readOnly/>
                                                 </div>
-                                                <div class="form-group">
+                                                <div class="form-group" style="text-align: center">
                                                     <label>Attendance Date</label>
-                                                    <input type="text" class="form-control" name="adate" id="adate" placeholder="Attendance Date" disabled/>
+                                                    <input style="text-align: center" type="text" class="form-control" name="adate" id="adate" placeholder="Attendance Date" value="<?php
+                                                    if (isset($data)) {
+                                                        echo $data["attendance_date"];
+                                                    }
+                                                    ?>" readOnly/>
                                                 </div>
-                                                <div class="form-group">
+                                                <div class="form-group" style="text-align: center">
                                                     <label>Check Out Time</label>
-                                                    <input type="text" class="form-control" name="checkout" id="checkout" placeholder="Check Out Time" disabled/>
+                                                    <input style="text-align: center" type="text" class="form-control" name="checkout" id="checkout" id="checkout" placeholder="Pending" value="<?php
+                                                    if (isset($data)) {
+                                                        echo $data["checkout_time"];
+                                                    }
+                                                    ?>" readOnly/>
                                                 </div>
 
 
@@ -83,7 +116,11 @@ include("db_connection.php");
                                     </div><!-- /.box-body -->
 
                                     <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="button" style="width:100%" id="btn_CheckIn" class="btn btn-primary" style="width:100%" onclick="checkOut()" <?php
+                                                if (!$logOut) {
+                                                    echo "disabled";
+                                                }
+                                                ?>>Check Out</button>
                                     </div>
                                 </form>
                             </div><!-- /.box -->
@@ -103,3 +140,13 @@ include("db_connection.php");
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
     </body>
 </html>
+
+<script>
+                                            function checkOut() {
+                                                var today = new Date();
+                                                var time = today.getHours() + ":" + today.getMinutes();
+                                                document.getElementById("checkout").value = time;
+                                                document.getElementById("form").submit();
+                                            }
+</script>
+

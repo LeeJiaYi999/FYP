@@ -13,7 +13,7 @@ if ($result->num_rows > 0) {
     $newid = "TR1001";
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "INSERT INTO training(training_id, training_description, department_name, assign_date) "
+    $sql = "INSERT INTO training(training_id, training_description, department_name, create_date) "
             . "VALUES ('" . $_POST['training_id'] . "','" . $_POST['training_description'] . "','" . $_POST['department'] . "','" . $_SESSION["date"] . "')";
     if ($conn->query($sql)) {
         echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
@@ -121,5 +121,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </body>
 </html>
-
-
