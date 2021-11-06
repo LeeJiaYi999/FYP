@@ -1,6 +1,22 @@
 <?php
 session_start();
 include("db_connection.php");
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $sql = "SELECT * FROM project WHERE project_id = '$id' LIMIT 1";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            $current_data = $row;
+            break;
+        }
+    } else {
+        echo '<script>alert("Extract data error !\nContact IT department for maintainence");window.location.href = "admin_list.php";</script>';
+    }
+} else {
+    
+}
+
 $Array_project = array();
 $sql = "SELECT * FROM project";
 $result = $conn->query($sql);
@@ -34,9 +50,9 @@ if ($result->num_rows > 0) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "INSERT INTO task(project_id, task_id, task_title, employee_id, task_description, due_date, assign_date) "
+    $sql = "INSERT INTO task(project_id, task_id, task_title, employee_id, task_description, due_date, assign_date, progress) "
             . "VALUES ('" . $_POST['project_id'] . "','" . $_POST['task_id'] . "','" . $_POST['task_title'] . "','" . $_POST['employee_id'] . "','" . $_POST['task_description'] . "'"
-            . ",'" . $_POST['due_date'] . "','" . $_SESSION["date"] . "')";
+            . ",'" . $_POST['due_date'] . "','" . $_SESSION["date"] . "','0')";
     if ($conn->query($sql)) {
         echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
     } else {
@@ -93,94 +109,133 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <!-- form start -->
                                 <form method="post">
                                     <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Project ID</label>
-                                                    <select class="form-control" name="project_id" id="project_id" onchange="select_id_display_details()" onclick="select_id_display_details()" >
-                                                        <?php
-                                                        $sql = "SELECT * FROM project";
-                                                        $result = $conn->query($sql);
-                                                        if ($result->num_rows > 0) {
-                                                            while ($row = mysqli_fetch_array($result)) {
-                                                                echo "<option value=" . $row["project_id"] . ">" . $row["project_id"] . "</option>";
-                                                            }
-                                                        } else {
-                                                            echo '<script>alert("Invalid input !")</script>';
-                                                        }
-                                                        ?>
-                                                    </select>
-                                                </div> 
-                                                <div class="form-group">
-                                                    <label>Project Title</label>
-                                                    <input type="text" class="form-control" name="project_title" id="project_title" placeholder="project title" readonly/>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Project Description</label>
-                                                    <textarea class="form-control" name="project_description"  id="project_description" rows="3" placeholder="project description" readonly></textarea>
-                                                </div>                                           
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Task ID</label>
-                                                    <input type="text" class="form-control" name ="task_id"  id ="task_id" placeholder="project id" value="<?php echo $newid ?>" readonly/>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="taskname">Task Title</label>
-                                                    <input type="text" class="form-control" name="task_title" id="task_title" placeholder="Enter task title">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Task Description</label>
-                                                    <textarea class="form-control" name="task_description" rows="3" placeholder="Enter description"></textarea>
-                                                </div>
-
-                                                <div class="row">   
-                                                    <div class="col-md-3">
-                                                        <label></label>
-                                                        <h4>Staff assign:</h4>
-
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Project ID</label>
+                                                        <input type="text" class="form-control" name="project_id" id="project_id" value="<?php
+                                                        echo $current_data["project_id"];
+                                                        ?>">
+                                                    </div> 
+                                                    <div class="form-group">
+                                                        <label>Project Title</label>
+                                                        <input type="text" class="form-control" name="project_title" id="project_title" placeholder="project title" readonly value="<?php
+                                                        echo $current_data["project_title"];
+                                                        ?>">
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label>Employee ID</label>
-                                                            <select class="form-control" name="employee_id" id="employee_id" onchange="select_id_display_emp()" onclick="select_id_display_emp()">
-                                                                <option></option>
-                                                                <?php
-                                                                $sql = "SELECT * FROM employee";
-                                                                $result = $conn->query($sql);
-                                                                if ($result->num_rows > 0) {
-                                                                    while ($row = mysqli_fetch_array($result)) {
-                                                                        echo "<option value=" . $row["employee_id"] . ">" . $row["employee_id"] . "</option>";
+                                                    <div class="form-group">
+                                                        <label>Project Description</label>
+                                                        <textarea class="form-control" name="project_description"  id="project_description" rows="3" placeholder="project description" readonly><?php
+                                                            echo $current_data["project_description"];
+                                                            ?></textarea>
+                                                    </div> 
+
+                                                    <h3>Staff assign:</h3>
+
+                                                    <div class="row">   
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Employee ID</label>
+                                                                <select class="form-control" name="employee_id" id="employee_id" onchange="select_id_display_emp()" onclick="select_id_display_emp()">
+                                                                    <option></option>
+                                                                    <?php
+////                                                                
+                                                                    if ($_SESSION["User"]["employee_type"] == "Admin") {
+                                                                        if ($current_data["department_name"] == "Cross Department") {
+                                                                            $sql = "SELECT * FROM employee";
+                                                                        } else {
+                                                                            $sql = "SELECT * FROM employee WHERE department_name = '" . $current_data["department_name"] . "'";
+                                                                        }
+                                                                    } else {
+                                                                        $sql = "SELECT * FROM employee WHERE department_name = '" . $_SESSION["User"]["department_name"] . "'";
                                                                     }
-                                                                } else {
-                                                                    echo '<script>alert("Invalid input !")</script>';
-                                                                }
-                                                                ?>
-                                                            </select>
-                                                        </div> 
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        <div class="form-group">
-                                                            <label>Employee Name</label>
-                                                            <input type="text" class="form-control" name="employee_name" id="employee_name" placeholder="employee name" readonly/>
+
+                                                                    $result = $conn->query($sql);
+                                                                    if ($result->num_rows > 0) {
+                                                                        while ($row = mysqli_fetch_array($result)) {
+                                                                            echo "<option value=" . $row["employee_id"] . ">" . $row["employee_id"] . "</option>";
+                                                                        }
+                                                                    } else {
+                                                                        echo '<script>alert("No available employee!")</script>';
+                                                                    }
+////                                                               
+                                                                    ?>
+                                                                </select>
+                                                            </div> 
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <div class="form-group">
+                                                                <label>Employee Name</label>
+                                                                <input type="text" class="form-control" name="employee_name" id="employee_name" placeholder="employee name" readonly/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Department</label>
+                                                                <input type="text" class="form-control" name="department_name" id="department_name" placeholder="department name" readonly/>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Join Date</label>
+                                                                <input type="date" class="form-control" name="join_date" id="join_date" placeholder="join date" readonly/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Professional Level</label>
+                                                                <input type="text" class="form-control" name="professional_level" id="professional_level" placeholder="professional level" readonly/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4"></div>
                                                 </div>
 
-                                                <div class="form-group">
-                                                    <div class="from-group">
-                                                        <label>Due Date</label>
-                                                        <input type="date" class="form-control" name="due_date" id="due_date" placeholder="due date">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Task ID</label>
+                                                        <input type="text" class="form-control" name ="task_id"  id ="task_id" placeholder="project id" value="<?php echo $newid ?>" readonly/>
                                                     </div>
-                                                </div><!-- /.form group -->
+                                                    <div class="form-group">
+                                                        <label for="taskname">Task Title</label>
+                                                        <input type="text" class="form-control" name="task_title" id="task_title" placeholder="Enter task title">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Task Description</label>
+                                                        <textarea class="form-control" name="task_description" rows="3" placeholder="Enter description"></textarea>
+                                                    </div>
+                                                    <div class="row">   
+                                                        <div class="col-md-5">
+                                                            <div class="form-group">
+                                                                <label>Task Difficulty</label>
+                                                                <select class="form-control" name="difficulty" id="difficulty">
+                                                                    <option>Easy</option>
+                                                                    <option>Moderate</option>
+                                                                    <option>Difficult</option>
+                                                                </select>
+                                                            </div> 
+                                                        </div> 
+                                                        <div class="col-md-7">
+                                                            <div class="form-group">
+                                                                <div class="from-group">
+                                                                    <label>Due Date</label>
+                                                                    <input type="date" class="form-control" name="due_date" id="due_date" placeholder="due date">
+                                                                </div>
+                                                            </div><!-- /.form group -->
+                                                        </div> 
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div><!-- /.box-body -->
+                                        </div><!-- /.box-body -->
+                                    </div>
                                     <div class="box-footer">
                                         <button type="submit" class="btn btn-primary" onclick="add()" id="btnadd" >Add</button>
                                     </div>
-                                </form>
                             </div><!-- /.box -->
+                            </form>
                         </div><!--/.col (left) -->
                         <!-- right column -->
                     </div>   <!-- /.row -->
@@ -209,13 +264,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                             function select_id_display_emp() {
                                                 var x = 0;
+                                                var currentTime = new Date()
+                                                var currentYear = currentTime.getFullYear();
                                                 while (Array_account) {
                                                     if (Array_account[x][0].toString() === document.getElementById("employee_id").value) {
+                                                        var joinDate = Array_account[x][20].toString();
+//                                                        var joinYear = joinDate.getFullYear();
                                                         document.getElementById("employee_name").value = Array_account[x][1].toString();
+                                                        document.getElementById("department_name").value = Array_account[x][12].toString();
+                                                        document.getElementById("join_date").value = joinDate;         //[Need to put join date]
+                                                        
+//                                                        if (joinYear - currentYear) >= 5) {  //[Need to put join date (the correct array place)]
+//                                                            document.getElementById("professional_level").value = "Expert";
+//                                                        } else if ((Date.getFullYear(Array_account[x][20].toString()) - currentYear) >= 2 && (Date.getFullYear(Array_account[x][20].toString()) - currentYear) < 5) {
+//                                                            document.getElementById("professional_level").value = "Senior";
+//                                                        } else {
+//                                                            document.getElementById("professional_level").value = "Freshman";
+//                                                        }
                                                     }
                                                     x++;
                                                 }
                                             }
+//                                                
         </script>
 
     </body>

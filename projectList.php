@@ -67,7 +67,12 @@ include("db_connection.php");
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM project";
+                                            if ($_SESSION["User"]["employee_type"] == "Admin") {
+                                                $sql = "SELECT * FROM project";
+                                            } else {
+                                                $sql = "SELECT * FROM project WHERE department_name ='Cross Department' OR department_name = '" . $_SESSION["User"]["department_name"] . "'";
+                                            }
+
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
@@ -78,7 +83,13 @@ include("db_connection.php");
                                                 <td>" . $row["department_name"] . "</td>
                                                 <td>" . $row["assign_date"] . "</td>
                                                 <td>" . $row["due_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='projectDetail.php?id=" . $row["project_id"] . "'><i class='fa fa-camera'></i></a></td>
+                                                <td><div class='row'>
+                                                <div class='col-md-6'>
+                                                    <a class='btn btn-warning' style='width: 100%' href='projectDetail.php?id=" . $row["project_id"] . "'><i class='fa fa-camera'></i></a>
+                                                </div>
+                                                <div class='col-md-6'>
+                                                    <a class='btn btn-warning' style='width: 100%' href='taskAdd.php?id=" . $row["project_id"] . "'><i class='fa fa-plus-square-o'></i></a>                                             </div>
+                                                </div></td>   
                                                       </tr>";
                                                 }
                                             } else {

@@ -14,16 +14,32 @@ if ($result->num_rows > 0) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "UPDATE `leave` SET `status`= '" . $_POST['status'] . "' WHERE leave_id = " . $_GET['id'] . "";
+    $sql = "UPDATE `leave` SET `status`= '" . $_POST['status'] . "',`reason`= '" . $_POST['reason'] . "' WHERE leave_id = " . $_GET['id'] . "";
     if ($conn->query($sql)) {
         if ($_POST['status'] == "Approve") {
-            $sql = "UPDATE `employee` SET `leave_available`=`leave_available` - " . $_POST['leave_day'] . " WHERE `employee_id` = '" . $_POST['eid'] . "'";
-            $conn->query($sql);
-        }else{
-            $sql = "UPDATE `employee` SET `leave_available`=`leave_available` + " . $_POST['leave_day'] . " WHERE `employee_id` = '" . $_POST['eid'] . "'";
-            $conn->query($sql);
+            if ($_POST['leave_type'] == "Annual Leave") {
+                $sql2 = "UPDATE `employee` SET `Annual_Leave` = `Annual_Leave` - {$_POST['leave_day']} WHERE `employee_id` = '{$_POST['eid']}'";
+            } else if ($_POST['leave_type'] == "Sick Leave") {
+                $sql2 = "UPDATE `employee` SET `Sick_Leave` = `Sick_Leave` - {$_POST['leave_day']} WHERE `employee_id` = '{$_POST['eid']}'";
+            } else if ($_POST['leave_type'] == "Compassionate Leave") {
+                $sql2 = "UPDATE `employee` SET `Compassionate_Leave` = `Compassionate_Leave` - {$_POST['leave_day']} WHERE `employee_id` = '{$_POST['eid']}'";
+            } else {
+                $sql2 = "UPDATE `employee` SET `Maternity Leave` = `Maternity Leave` - {$_POST['leave_day']} WHERE `employee_id` = '{$_POST['eid']}'";
+            }
+            $conn->query($sql2);
+        } else {
+            if ($_POST['leave_type'] == "Annual Leave") {
+                $sql2 = "UPDATE `employee` SET `Annual_Leave` = `Annual_Leave` + {$_POST['leave_day']} WHERE `employee_id` = '{$_POST['eid']}'";
+            } else if ($_POST['leave_type'] == "Sick Leave") {
+                $sql2 = "UPDATE `employee` SET `Sick_Leave` = `Sick_Leave` + {$_POST['leave_day']} WHERE `employee_id` = '{$_POST['eid']}'";
+            } else if ($_POST['leave_type'] == "Compassionate Leave") {
+                $sql2 = "UPDATE `employee` SET `Compassionate_Leave` = `Compassionate_Leave` + {$_POST['leave_day']} WHERE `employee_id` = '{$_POST['eid']}'";
+            } else {
+                $sql2 = "UPDATE `employee` SET `Maternity Leave` = `Maternity Leave` + {$_POST['leave_day']} WHERE `employee_id` = '{$_POST['eid']}'";
+            }
+            $conn->query($sql2);
         }
-        echo '<script>alert("Submit successfully\n Back to home page !");window.location.href = "home.php";</script>';
+        echo '<script>alert("Update successfully\n Back to home page !");window.location.href = "home.php";</script>';
     } else {
         echo '<script>alert("Update fail !");window.location.href = "home.php";</script>';
     }
@@ -124,10 +140,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Status</label>
-                                                    <select class="form-control" name="status" id="status">
+                                                    <select class="form-control" name="status" id="status" <?php
+                                                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                                        echo "disabled";
+                                                    }
+                                                    ?>>
                                                         <option value="Approve">Approve</option>
                                                         <option value="Reject">Reject</option>
                                                     </select>
+                                                </div>
+                                                <div class="form-group" id="reason_box">
+                                                    <label>Reason</label>
+                                                    <input type="text" class="form-control" name="reason" id="reason" value="<?php
+                                                    if (isset($data)) {
+                                                        echo $data["reason"];
+                                                    }
+                                                    ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -135,7 +163,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </div><!-- /.box-body -->
 
                                     <div class="box-footer">
-                                        <button type="button" class="btn btn-success btn-flat" onclick="update()"><i class="fa fa-check-square-o"></i> Update</button>
+                                        <button type="button" class="btn btn-success btn-flat" onclick="update()" <?php
+                                        if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                            echo "disabled";
+                                        }
+                                        ?>><i class="fa fa-check-square-o" ></i> Update</button>
                                     </div>
                                 </form>
                             </div><!-- /.box -->
@@ -153,17 +185,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script src="js/bootstrap.min.js" type="text/javascript"></script>
         <!-- AdminLTE App -->   
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
-        
+
         <script>
-        function update(){
-            if(document.getElementById("status").value === ""){
-                    alert("Please fill up all the input !");
-                }else{
-                    document.getElementById("form").submit();
-                }
-            
-        }
-        
+                                            function update() {
+                                                if (document.getElementById("status").value === "" || document.getElementById("reason").value === "") {
+                                                    alert("Please fill up all the input !");
+                                                } else {
+                                                    document.getElementById("form").submit();
+                                                }
+
+                                            }
+
         </script>
     </body>
 </html>

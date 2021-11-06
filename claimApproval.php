@@ -1,13 +1,21 @@
 <?php
 session_start();
 include("db_connection.php");
+if (isset($_GET["type1"])) {
+    $sql = "SELECT * FROM claim WHERE status = 'Pending' AND employee_id = '" . $_SESSION['User']['employee_id'] . "'";
+} elseif (isset($_GET["type2"])) {
+    $sql = "SELECT * FROM claim WHERE status != 'Pending' AND employee_id = '" . $_SESSION['User']['employee_id'] . "'";
+} elseif (isset($_GET["type3"])) {
+    $sql = "SELECT * FROM claim WHERE status = 'Pending'";
+} else {
+    $sql = "SELECT * FROM claim WHERE status != 'Pending'";
+}
 ?>
 
-<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Leave Application</title>
+        <title>Claim List</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <!-- bootstrap 3.0.2 -->
         <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -34,12 +42,12 @@ include("db_connection.php");
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Employee Leave Application Table
+                        Claims Table
                         <small>[List]</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Leave Application</li>
+                        <li class="active">Claims Table</li>
                     </ol>
                 </section>
 
@@ -49,56 +57,53 @@ include("db_connection.php");
                         <div class="col-xs-12">                           
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">All Employee Leave Application</h3>                                    
+                                    <?php
+                                    if (isset($_GET["type1"])) {
+                                        echo'<h3 class="box-title">Personal Pending Claims</h3>';
+                                    } elseif (isset($_GET["type2"])) {
+                                       echo'<h3 class="box-title">Personal Claims History</h3>'; 
+                                    } elseif (isset($_GET["type3"])) {
+                                        echo'<h3 class="box-title">All Pending Claims</h3>'; 
+                                    } else {
+                                        echo'<h3 class="box-title">All Claims History</h3>'; 
+                                    }
+                                    ?>
+                                                                       
                                 </div><!-- /.box-header -->
-                                <div class="box-body">
-                                    <table id="example1" class="table table-bordered">
+                                <div class="box-body table-responsive">
+                                    <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
+                                                <th>Claim ID</th>
                                                 <th>Employee ID</th>
-                                                <th>Employee Name</th>
-                                                <th>Leave Day</th>
-                                                <th>Start Date</th>
-                                                <th>End Date</th>
-                                                <th>Leave Type</th>
-                                                <th>Leave Description</th>
-                                                <th>Approved By</th>
-                                                <th>Reason</th>
+                                                <th>Claim Description</th>
+                                                <th>Claim Amount</th>
+                                                <th>Claim Date</th>
                                                 <th>Status</th>
+                                                <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM `leave` WHERE `employee_id` = '" . $_SESSION["User"]["employee_id"] . "'";
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
-                                                    if ($row["status"] === "Reject") {
-                                                        $color = "red";
-                                                    } else {
-                                                        $color = "green";
-                                                    }
-                                                    echo
-                                                    "<tr><td>" . $row["employee_id"] . "</td>
-                                                <td>" . $row["employee_name"] . "</td>
-                                                <td>" . $row["leave_day"] . "</td>
-                                                <td>" . $row["start_date"] . "</td>
-                                                <td>" . $row["end_date"] . "</td>
-                                                <td>" . $row["leave_type"] . "</td>
-                                                <td>" . $row["leave_description"] . "</td>
-                                                <td>" . $row["Approve_by"] . "</td>
-                                                <td>" . $row["reason"] . "</td>
-                                                <td style='color: $color'>" . $row["status"] . "</td>
-                                                </tr>";
+                                                    echo "<tr>
+                                                    <td>" . $row["claim_id"] . "</td>
+                                                    <td>" . $row["employee_id"] . "</td>
+                                                    <td>" . $row["claim_description"] . "</td>
+                                                    <td>" . $row["claim_amount"] . "</td>
+                                                    <td>" . $row["claim_date"] . "</td>
+                                                    <td>" . $row["status"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='claimDetail.php?id=" . $row["claim_id"] . "'><i class='fa fa-camera'></i></a></td>
+                                            </tr>";
                                                 }
                                             } else {
                                                 echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>
-
                                         </tbody>
                                     </table>
-
                                 </div><!-- /.box-body -->
                             </div><!-- /.box -->
                         </div>

@@ -1,14 +1,37 @@
 <?php
 session_start();
 include("db_connection.php");
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "UPDATE department SET department_name='" . $_POST['departmentname'] . "',department_description='" . $_POST['departmentdescription'] . "' WHERE 1";
-    if ($conn->query($sql)) {
-        $_SESSION["department_name"] = $_POST['departmentname'];
-        $_SESSION["department_description"] = $_POST['departmentdescription'];
-        echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $sql = "SELECT * FROM department WHERE department_id = '$id' LIMIT 1";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            $current_data = $row;
+            break;
+        }
     } else {
-        echo '<script>alert("Update fail !");</script>';
+        echo '<script>alert("Extract data error !\nContact management for maintainence");window.location.href = "admin_list.php";</script>';
+    }
+} else {
+    
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_POST['action'] == "save") {
+        $sql = "UPDATE department SET department_description='" . $_POST['department_description'] . "',department_name='" . $_POST['department_name'] . "' WHERE department_id='" . $current_data['department_id'] . "'";
+        if ($conn->query($sql)) {
+            echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
+        } else {
+            echo '<script>alert("Update fail !");</script>';
+        }
+    } else {
+        $sql = "DELETE FROM `department` WHERE `department_id`= '" . $current_data['department_id'] . "'";
+        if ($conn->query($sql)) {
+            echo '<script>alert("Delete Successfully !");window.location.href = "home.php";</script>';
+        } else {
+            echo '<script>alert("Delete fail !");</script>';
+        }
     }
 }
 ?>
@@ -40,11 +63,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <section class="content-header">
                     <h1>
                         Department
-                        <small>[Add]</small>
+                        <small>[Modify&Delete]</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Add New Department</li>
+                        <li class="active">Department Details</li>
                     </ol>
                 </section>
 
@@ -56,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <!-- general form elements -->
                             <div class="box box-primary">
                                 <div class="box-header">
-                                    <h3 class="box-title">Add Department</h3>
+                                    <h3 class="box-title">Department Details</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
                                 <form method="post">
@@ -64,32 +87,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
+                                                    <label for="departmentid">Department ID</label>
+                                                    <input type="text" class="form-control" name="department_id" id="department_id" placeholder="Department id" disabled value="<?php
+                                                    echo $current_data["department_id"];
+                                                    ?>">
+                                                </div>
+                                                <div class="form-group">
                                                     <label for="departmentname">Department Name</label>
-                                                    <input type="text" class="form-control" name="departmentname" id="departmentname" placeholder="Enter department name" required="required" 
-                                                           value="<?php
-                                                           echo $_SESSION["department_name"];
-                                                           ?>">
+                                                    <input type="text" class="form-control" name="department_name" id="department_name" placeholder="Enter department name" readonly value="<?php
+                                                    echo $current_data["department_name"];
+                                                    ?>">
                                                 </div>        
                                                 <div class="form-group">
                                                     <label>Department Description</label>
-                                                    <textarea class="form-control" name="departmentdescription" id="departmentdescription" rows="3" placeholder="Enter description" required="required" 
-                                                           value="<?php
-                                                           echo $_SESSION["department_description"];
-                                                           ?>"></textarea>
+                                                    <textarea class="form-control" type="textarea" name="department_description" id="department_description" rows="3" placeholder="Enter description" readonly><?php
+                                                        echo $current_data["department_description"];
+                                                        ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
-                                            <button type="add" class="btn btn-primary">Add</button>
+                                        <button type="button" id="btnmodify" name="btnmodify" class="btn btn-primary">Modify</button>
+                                        <button type="submit" id="btnsave" name="action" class="btn btn-primary" value="save">Save</button>
+                                        <button class="btn btn-primary" name="action" value="delete">Delete</button>
+                                        <button class="btn btn-primary">Cancel</button>
                                     </div>
                                 </form>
-
                             </div><!-- /.box -->
-
-
                         </div><!--/.col (left) -->
-                        <!-- right column -->
                     </div>   <!-- /.row -->
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
@@ -101,6 +127,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- AdminLTE App -->
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
 
+        <script>
+
+            $(document).ready(function () {
+
+                $("#btnmodify").on("click", function () {
+
+                    $("textarea[type=textarea]").removeAttr("readonly");
+                    $("input[type=text]").removeAttr("readonly");
+                    $("input[type=date]").removeAttr("readonly");
+                    $("select[type=select]").removeAttr("readonly");
+                })
+
+                $("#btnsave").on("click", function () {
+
+                    $("textarea[type=textarea]").prop("readonly", true);
+                    $("input[type=text]").prop("readonly", true);
+                    $("input[type=date]").prop("readonly", true);
+                    $("select[type=select]").prop("readonly", true);
+                })
+
+
+            })
+        </script>
     </body>
 </html>
 

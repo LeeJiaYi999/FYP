@@ -29,6 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $sql = "DELETE FROM `training` WHERE `training_id`= '" . $current_data['training_id'] . "'";
         if ($conn->query($sql)) {
+            $sql = "DELETE FROM `question` WHERE `training_id`= '" . $current_data['training_id'] . "'";
+            if ($conn->query($sql)) {
+                echo '<script>alert("Delete Successfully !");window.location.href = "home.php";</script>';
+            } else {
+                echo '<script>alert("Delete fail !");</script>';
+            }
             echo '<script>alert("Delete Successfully !");window.location.href = "home.php";</script>';
         } else {
             echo '<script>alert("Delete fail !");</script>';
@@ -139,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <button class="btn btn-primary">Cancel</button>';
                                         }
                                         ?>
-                                        
+
                                     </div>
                                 </form>
                             </div><!-- /.box -->

@@ -50,13 +50,16 @@ and open the template in the editor.
                             <!-- small box -->
                             <div class="small-box bg-aqua">
                                 <div class="inner">
-                                    <h3>2</h3>
+                                    <h3><?php
+                                        $employee = $conn->query("SELECT * FROM employee")->num_rows;
+                                        echo number_format($employee);
+                                        ?></h3>
                                     <p>Total Employees</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-person-stalker"></i>
                                 </div>
-                                <a href="employee.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                                <a href="employeeList.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <!-- ./col -->
@@ -70,7 +73,7 @@ and open the template in the editor.
                                 <div class="icon">
                                     <i class="ion ion-pie-graph"></i>
                                 </div>
-                                <a href="viewAttendance.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                                <a href="viewAttendanceList.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <!-- ./col -->
@@ -78,13 +81,16 @@ and open the template in the editor.
                             <!-- small box -->
                             <div class="small-box bg-yellow">
                                 <div class="inner">
-                                    <h3>0</h3>             
+                                    <h3><?php
+                                        $employee = $conn->query("SELECT * FROM `attendance` WHERE `status` = 'On Time'")->num_rows;
+                                        echo number_format($employee);
+                                        ?></h3>             
                                     <p>On Time Today</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-clock"></i>
                                 </div>
-                                <a href="viewAttendance.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                                <a href="viewAttendanceList.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <!-- ./col -->
@@ -92,13 +98,16 @@ and open the template in the editor.
                             <!-- small box -->
                             <div class="small-box bg-red">
                                 <div class="inner">
-                                    <h3>0</h3>
+                                    <h3><?php
+                                        $employee = $conn->query("SELECT * FROM `attendance` WHERE `status` = 'Late'")->num_rows;
+                                        echo number_format($employee);
+                                        ?></h3>
                                     <p>Late Today</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-alert-circled"></i>
                                 </div>
-                                <a href="viewAttendance.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                                <a href="viewAttendanceList.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                         <!-- ./col -->
@@ -234,91 +243,91 @@ and open the template in the editor.
 
                 </section>
             </aside>
-            
-
-        <!-- jQuery 2.0.2 -->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-        <!-- Bootstrap -->
-        <script src="js/bootstrap.min.js" type="text/javascript"></script>
-        <!-- DATA TABES SCRIPT -->
-        <script src="js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
-        <script src="js/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
-        <!-- AdminLTE App -->
-        <script src="js/AdminLTE/app.js" type="text/javascript"></script>       
 
 
+            <!-- jQuery 2.0.2 -->
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+            <!-- Bootstrap -->
+            <script src="js/bootstrap.min.js" type="text/javascript"></script>
+            <!-- DATA TABES SCRIPT -->
+            <script src="js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
+            <script src="js/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
+            <!-- AdminLTE App -->
+            <script src="js/AdminLTE/app.js" type="text/javascript"></script>       
 
-        <script>
-            $(function () {
-                var barChartCanvas = $('#barChart').get(0).getContext('2d')
-                var barChart = new Chart(barChartCanvas)
-                var barChartData = {
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                    datasets: [
-                        {
-                            label: 'Late',
-                            fillColor: 'rgba(210, 214, 222, 1)',
-                            strokeColor: 'rgba(210, 214, 222, 1)',
-                            pointColor: 'rgba(210, 214, 222, 1)',
-                            pointStrokeColor: '#c1c7d1',
-                            pointHighlightFill: '#fff',
-                            pointHighlightStroke: 'rgba(220,220,220,1)',
-                            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]},
-                        {
-                            label: 'Ontime',
-                            fillColor: 'rgba(60,141,188,0.9)',
-                            strokeColor: 'rgba(60,141,188,0.8)',
-                            pointColor: '#3b8bba',
-                            pointStrokeColor: 'rgba(60,141,188,1)',
-                            pointHighlightFill: '#fff',
-                            pointHighlightStroke: 'rgba(60,141,188,1)',
-                            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
-                    ]
-                }
-                barChartData.datasets[1].fillColor = '#00a65a'
-                barChartData.datasets[1].strokeColor = '#00a65a'
-                barChartData.datasets[1].pointColor = '#00a65a'
-                var barChartOptions = {
-                    //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
-                    scaleBeginAtZero: true,
-                    //Boolean - Whether grid lines are shown across the chart
-                    scaleShowGridLines: true,
-                    //String - Colour of the grid lines
-                    scaleGridLineColor: 'rgba(0,0,0,.05)',
-                    //Number - Width of the grid lines
-                    scaleGridLineWidth: 1,
-                    //Boolean - Whether to show horizontal lines (except X axis)
-                    scaleShowHorizontalLines: true,
-                    //Boolean - Whether to show vertical lines (except Y axis)
-                    scaleShowVerticalLines: true,
-                    //Boolean - If there is a stroke on each bar
-                    barShowStroke: true,
-                    //Number - Pixel width of the bar stroke
-                    barStrokeWidth: 2,
-                    //Number - Spacing between each of the X value sets
-                    barValueSpacing: 5,
-                    //Number - Spacing between data sets within X values
-                    barDatasetSpacing: 1,
-                    //String - A legend template
-                    legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
-                    //Boolean - whether to make the chart responsive
-                    responsive: true,
-                    maintainAspectRatio: true
-                }
 
-                barChartOptions.datasetFill = false
-                var myChart = barChart.Bar(barChartData, barChartOptions)
-                document.getElementById('legend').innerHTML = myChart.generateLegend();
-            });
-        </script>
 
-        <script>
-            $(function () {
-                $('#select_year').change(function () {
-                    window.location.href = 'home.php?year=' + $(this).val();
+            <script>
+                $(function () {
+                    var barChartCanvas = $('#barChart').get(0).getContext('2d')
+                    var barChart = new Chart(barChartCanvas)
+                    var barChartData = {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        datasets: [
+                            {
+                                label: 'Late',
+                                fillColor: 'rgba(210, 214, 222, 1)',
+                                strokeColor: 'rgba(210, 214, 222, 1)',
+                                pointColor: 'rgba(210, 214, 222, 1)',
+                                pointStrokeColor: '#c1c7d1',
+                                pointHighlightFill: '#fff',
+                                pointHighlightStroke: 'rgba(220,220,220,1)',
+                                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]},
+                            {
+                                label: 'Ontime',
+                                fillColor: 'rgba(60,141,188,0.9)',
+                                strokeColor: 'rgba(60,141,188,0.8)',
+                                pointColor: '#3b8bba',
+                                pointStrokeColor: 'rgba(60,141,188,1)',
+                                pointHighlightFill: '#fff',
+                                pointHighlightStroke: 'rgba(60,141,188,1)',
+                                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+                        ]
+                    }
+                    barChartData.datasets[1].fillColor = '#00a65a'
+                    barChartData.datasets[1].strokeColor = '#00a65a'
+                    barChartData.datasets[1].pointColor = '#00a65a'
+                    var barChartOptions = {
+                        //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+                        scaleBeginAtZero: true,
+                        //Boolean - Whether grid lines are shown across the chart
+                        scaleShowGridLines: true,
+                        //String - Colour of the grid lines
+                        scaleGridLineColor: 'rgba(0,0,0,.05)',
+                        //Number - Width of the grid lines
+                        scaleGridLineWidth: 1,
+                        //Boolean - Whether to show horizontal lines (except X axis)
+                        scaleShowHorizontalLines: true,
+                        //Boolean - Whether to show vertical lines (except Y axis)
+                        scaleShowVerticalLines: true,
+                        //Boolean - If there is a stroke on each bar
+                        barShowStroke: true,
+                        //Number - Pixel width of the bar stroke
+                        barStrokeWidth: 2,
+                        //Number - Spacing between each of the X value sets
+                        barValueSpacing: 5,
+                        //Number - Spacing between data sets within X values
+                        barDatasetSpacing: 1,
+                        //String - A legend template
+                        legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+                        //Boolean - whether to make the chart responsive
+                        responsive: true,
+                        maintainAspectRatio: true
+                    }
+
+                    barChartOptions.datasetFill = false
+                    var myChart = barChart.Bar(barChartData, barChartOptions)
+                    document.getElementById('legend').innerHTML = myChart.generateLegend();
                 });
-            });
-        </script>
+            </script>
+
+            <script>
+                $(function () {
+                    $('#select_year').change(function () {
+                        window.location.href = 'home.php?year=' + $(this).val();
+                    });
+                });
+            </script>
 
     </body>
 </html>

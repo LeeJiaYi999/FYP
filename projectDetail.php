@@ -31,9 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($conn->query($sql)) {
             $sql = "DELETE FROM `task` WHERE `project_id`= '" . $current_data['project_id'] . "'";
             if ($conn->query($sql)) {
-                echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
+                echo '<script>alert("Delete Successfully !");window.location.href = "home.php";</script>';
             } else {
-                echo '<script>alert("Update fail !");</script>';
+                echo '<script>alert("Delete fail !");</script>';
             }
             echo '<script>alert("Delete Successfully !");window.location.href = "home.php";</script>';
         } else {
@@ -126,20 +126,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Department Name</label>
-                                                    <select type="select" class="form-control" name="department_name" readonly>
+                                                    <select type="select" class="form-control" name="department_name" readonly >
                                                         <?php
-                                                        $sql = "SELECT * FROM department";
-                                                        $result = $conn->query($sql);
-                                                        if ($result->num_rows > 0) {
-                                                            while ($row = mysqli_fetch_array($result)) {
-                                                                if ($current_data["department_name"] == $row["department_name"]) {
-                                                                    echo "<option value=" . $row["department_name"] . " selected>" . $row["department_name"] . "</option>";
-                                                                } else {
-                                                                    echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                        if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                                            if ($current_data["department_name"] != "Cross Department") {
+                                                                echo "<option value='Cross Department'>Cross Department</option>";
+                                                            }
+                                                            if ($current_data["department_name"] == "Cross Department") {
+                                                                echo "<option value='Cross Department' selected>Cross Department</option>";
+                                                            }
+
+                                                            $sql = "SELECT * FROM department";
+                                                            $result = $conn->query($sql);
+                                                            if ($result->num_rows > 0) {
+                                                                while ($row = mysqli_fetch_array($result)) {
+                                                                    if ($current_data["department_name"] == $row["department_name"]) {
+                                                                        echo "<option value=" . $row["department_name"] . " selected>" . $row["department_name"] . "</option>";
+                                                                    } else {
+                                                                        echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                                    }
                                                                 }
+                                                            } else {
+                                                                echo '<script>alert("No available department!")</script>';
                                                             }
                                                         } else {
-                                                            echo '<script>alert("Invalid input !")</script>';
+                                                            echo "<option value=" . $_SESSION["User"]["department_name"] . ">" . $_SESSION["User"]["department_name"] . "</option>";
                                                         }
                                                         ?>
                                                     </select>

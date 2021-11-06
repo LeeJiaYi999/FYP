@@ -56,22 +56,29 @@ include("db_connection.php");
                                             <tr>
                                                 <th>Announcement ID</th>
                                                 <th>Announcement Description</th>
+                                                <th>Department Name</th>
                                                 <th>Post Date(s)</th>
                                                 <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM announcement";
+                                            if ($_SESSION["User"]["employee_type"] == "Admin") {
+                                                $sql = "SELECT * FROM announcement";
+                                            }else{
+                                                 $sql = "SELECT * FROM announcement WHERE department_name ='General' OR department_name = '" . $_SESSION["User"]["department_name"] . "'";
+                                            }
+                                            
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
                                                     echo "<tr>
-                                                <td>" . $row["announcement_id"] . "</td>
-                                                <td>" . $row["announcement_description"] . "</td>
-                                                <td>" . $row["post_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='announcementDetails.php?id=" . $row["announcement_id"] . "'><i class='fa fa-camera'></i></a></td>
-                                                      </tr>";
+                                                    <td>" . $row["announcement_id"] . "</td>
+                                                    <td>" . $row["announcement_description"] . "</td>
+                                                    <td>" . $row["department_name"] . "</td>
+                                                    <td>" . $row["post_date"] . "</td>
+                                                    <td><a class='btn btn-warning' style='width: 100%' href='announcementDetails.php?id=" . $row["announcement_id"] . "'><i class='fa fa-camera'></i></a></td>
+                                                    </tr>";
                                                 }
                                             } else {
                                                 echo '<script>alert("No available data !")</script>';
@@ -79,11 +86,13 @@ include("db_connection.php");
                                             ?>                                           
                                         </tbody>
                                     </table>
-                                    <div class="box-footer" <?php if ($_SESSION['User']['employee_type'] !== "Admin"){echo "style='display:none'";}?>>
+                                    <div class="box-footer" <?php if ($_SESSION['User']['employee_type'] == "Employee") {
+                                                echo "style='display:none'";
+                                            } ?>>
                                         <label>Add a new announcement?</label>
                                         <button class="btn btn-primary" onclick="location.href = 'announcementAdd.php'">Add</button>
                                     </div>
-                                                             
+
                                 </div>
                             </div><!-- /.box-body -->
                         </div><!-- /.box -->

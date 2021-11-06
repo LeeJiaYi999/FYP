@@ -1,25 +1,24 @@
 <?php
 session_start();
 include("db_connection.php");
-$sql = "SELECT department_id FROM department ORDER BY department_id DESC LIMIT 1";
+$sql = "SELECT schedule_id FROM schedule ORDER BY schedule_id DESC LIMIT 1";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while ($row = mysqli_fetch_array($result)) {
-        $latestnum = ((int) substr($row['department_id'], 1)) + 1;
-        $newid = "D{$latestnum}";
+        $latestnum = ((int) substr($row['schedule_id'], 1)) + 1;
+        $newid = "S{$latestnum}";
         break;
     }
 } else {
-    $newid = "D1001";
+    $newid = "S1001";
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "INSERT INTO department(department_id, department_name, department_description) "
-            . "VALUES ('" . $_POST['department_id'] . "','" . $_POST['department_name'] . "','" . $_POST['department_description'] . "')";
+    $sql = "INSERT INTO schedule(schedule_id, checkin_time, checkout_time, status) "
+            . "VALUES ('" . $_POST['schedule_id'] . "','" . $_POST['checkin'] . "','" . $_POST['checkout'] . "','" . $_POST['schedule_name'] . "')";
     if ($conn->query($sql)) {
         echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
-
-    }else{
+    } else {
         echo '<script>alert("Create Fail !");</script>';
     }
 }
@@ -51,12 +50,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Department
+                        Schedule
                         <small>[Add]</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Add New Department</li>
+                        <li class="active">Add New Schedule</li>
                     </ol>
                 </section>
 
@@ -71,27 +70,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <h3 class="box-title">Add Department</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
-                                <form method="post">
+                                <form method="post" id="form">
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="department_id">Department ID</label>
-                                                    <input type="text" class="form-control" name="department_id" id="department_id" placeholder="Enter department id" value="<?php echo $newid ?>" readOnly>
+                                                    <label for="department_id">Schedule ID</label>
+                                                    <input type="text" class="form-control" name="schedule_id" id="schedule_id" placeholder="Enter Schedule id" value="<?php echo $newid ?>" readOnly>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="departmentname">Department Name</label>
-                                                    <input type="text" class="form-control" name="department_name" id="department_name" placeholder="Enter department name">
-                                                </div>        
+                                                    <label for="schedulename">Schedule Name</label>
+                                                    <input type="text" class="form-control" name="schedule_name" id="schedule_name" placeholder="Enter Schedule name">
+                                                </div>
                                                 <div class="form-group">
-                                                    <label>Department Description</label>
-                                                    <textarea class="form-control" name="department_description" id="department_description" rows="3" placeholder="Enter description"></textarea>
+                                                    <label>Check In Time</label>
+                                                    <input type="time" min="00:00" max="24:00" class="form-control" name="checkin" id="checkin" placeholder="Check In Time"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Check Out Time</label>
+                                                    <input type="time" min="00:00" max="24:00" class="form-control" name="checkout" id="checkout" placeholder="Check Out Time"/>
                                                 </div>
                                             </div>
                                         </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer">
-                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        <button type="button" class="btn btn-primary" onclick="save()" id="btnsave">Add</button>
                                     </div>
                                 </form>
 
@@ -110,7 +113,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script src="js/bootstrap.min.js" type="text/javascript"></script>
         <!-- AdminLTE App -->
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
+        <script>
+            function save() {
+                var valid = true;
+                var error = "";
 
+                if (document.getElementById("schedule_name").value === "") {
+                    valid = false;
+                    error += "Please enter Schedule Name !\n";
+                }
+
+                if (document.getElementById("checkin").value === "") {
+                    valid = false;
+                    error += "Please enter Check In Time !\n";
+                }
+
+                if (document.getElementById("checkout").value === "") {
+                    valid = false;
+                    error += "Please enter Check Out Time !\n";
+                }
+                if (valid) {
+                    document.getElementById("form").submit();
+
+                } else {
+                    alert(error);
+                }
+            }
+
+        </script>
     </body>
 </html>
-

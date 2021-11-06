@@ -6,16 +6,26 @@ $sql = "SELECT * FROM attendance WHERE employee_id = '" . $_SESSION["User"]["emp
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while ($row = mysqli_fetch_array($result)) {
-        echo '<script>var checkIn = true;</script>';;
+        echo '<script>var checkInIs = true;</script>';
         $data = $row;
         break;
     }
 } else {
-    echo '<script>var checkIn = false;</script>';
+    $sql = "SELECT e.`employee_id`, s.* FROM `employee` e, `schedule` s WHERE e.`Schedule_id` = s.`Schedule_id` AND `employee_id` = '" . $_SESSION["User"]["employee_id"] . "'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            echo '<script>var checkInIs = false;</script>';
+            echo '<script>var checkInTime = ' . json_encode($row["checkin_time"]) . ';</script>';
+            break;
+        }
+    }
 }
 
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "INSERT INTO attendance(checkin_time, checkout_time, attendance_date, employee_id, employee_name, status) VALUES ('" . $_POST['checkin'] . "',null,'" . $_SESSION["date"] . "','" . $_SESSION["User"]["employee_id"] . "','" . $_SESSION["User"]["employee_name"] . "','" . $_POST["status"] . "')";
+    $sql = "INSERT INTO `attendance`(`checkin_time`, `attendance_date`, `employee_id`, `employee_name`, `status`, `reason`) VALUES ('" . $_POST['checkin'] . "','" . $_POST['adate'] . "','" . $_SESSION["User"]["employee_id"] . "','" . $_SESSION["User"]["employee_name"] . "','" . $_POST["status"] . "','" . $_POST["reason"] . "')";
     if ($conn->query($sql)) {
         echo '<script>alert("Check In successfully\n Back to home page !");window.location.href = "home.php";</script>';
     } else {
@@ -37,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Theme style -->
         <link href="css/AdminLTE.css" rel="stylesheet" type="text/css" />
     </head>
-    <body>
+    <body onload="load_form()">
         <?php
         include("sidebar.php");
         ?>
@@ -64,11 +74,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-md-12">
                                 <div class="box box-primary">
                                     <div class="box-header">
-                                        <h3 class="box-title" <?php if (isset($data)) {
-                                                            echo "style='color:red'";
-                                                        }?>>Check In Attendance Form <?php if (isset($data)) {
-                                                            echo "( You have already Check In today)";
-                                                        }?></h3>
+                                        <h3 class="box-title" <?php
+                                        if (isset($data)) {
+                                            echo "style='color:red'";
+                                        }
+                                        ?>>Check In Attendance Form <?php
+                                                if (isset($data)) {
+                                                    echo "( You have already Check In today)";
+                                                }
+                                                ?></h3>
                                     </div><!-- /.box-header -->
                                     <!-- form start -->
                                     <form id="form" method="post">
@@ -101,12 +115,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         }
                                                         ?>" readonly/>
                                                     </div>
+
+                                                    <div class="form-group"  style="text-align: center" id="reason_box" <?php if (isset($data)) {
+                                                            if($data["status"] === "Late"){
+                                                                echo "style='display:block'";
+                                                            }else{
+                                                                echo "style='display:none'";
+                                                            }
+                                                        }?>>
+                                                        <label style="color:red">Reason</label>
+                                                        <input   type="text" class="form-control" name="reason" id="reason" value="<?php
+                                                        if (isset($data)) {
+                                                            echo $data["reason"];
+                                                        }
+                                                        ?>" <?php if (isset($data)) {
+                                                            echo "readonly";
+                                                        }?> placeholder="Provide reason"/>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div><!-- /.box-body -->
 
                                         <div class="box-footer">
-                                            <button type="button" id="btn_CheckIn" class="btn btn-primary" style="width:100%" onclick="checkIn()" <?php if(isset($data)){echo "disabled";}?>>Check In</button>
+                                            <button type="button" id="btn_CheckIn" class="btn btn-primary" style="width:100%" onclick="checkIn()" <?php
+                                                    if (isset($data)) {
+                                                        echo "disabled";
+                                                    }
+                                                    ?>>Check In</button>
                                         </div>
                                     </form>
                                 </div><!-- /.box -->
@@ -126,18 +161,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </body>
 </html>
 <script>
+                                                var setCurrentHour = 0;
+                                                var setCurrentMin = 0;
+                                                function load_form() {
+                                                    if (!checkInIs) {
+                                                        var today = new Date();
+                                                        var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+                                                        var time = today.getHours() + ":" + today.getMinutes();
+                                                        var checkInHour = parseInt(checkInTime.substring(0, 2));
+                                                        var checkInMin = parseInt(checkInTime.substring(3, 5));
+
+                                                        setCurrentHour = today.getHours();
+                                                        setCurrentMin = today.getMinutes();
+                                                        if (today.getHours() > checkInHour) {
+                                                            document.getElementById("status").value = "Late";
+                                                        } else if (today.getHours() === checkInHour && today.getMinutes() > checkInMin) {
+                                                            document.getElementById("status").value = "Late";
+                                                        } else {
+                                                            document.getElementById("status").value = "On time";
+                                                        }
+                                                        document.getElementById("adate").value = date;
+                                                        document.getElementById("checkin").value = time;
+                                                        if (document.getElementById("status").value === "Late") {
+                                                            document.getElementById("reason_box").style.display = "block";
+                                                        } else {
+                                                            document.getElementById("reason_box").style.display = "none";
+                                                        }
+                                                    }else{
+                                                        if (lateOntime) {
+                                                            document.getElementById("reason_box").style.display = "block";
+                                                            document.getElementById("reason").readonly = true;
+                                                        } else {
+                                                            document.getElementById("reason_box").style.display = "none";
+                                                        }
+                                                    }
+                                                }
 
                                                 function checkIn() {
                                                     var today = new Date();
-                                                    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-                                                    var time = today.getHours() + ":" + today.getMinutes();
-                                                    if (today.getHours() > 8) {
-                                                        document.getElementById("status").value = "Late";
+                                                    if (setCurrentHour < today.getHours()) {
+                                                        alert("Reload the form ...");
+                                                        location.reload();
                                                     } else {
-                                                        document.getElementById("status").value = "On time";
+                                                        if ((today.getMinutes() - setCurrentMin) > 2) {
+                                                            alert("Reload the form ...");
+                                                            location.reload();
+                                                        } else {
+                                                            if (document.getElementById("status").value === "Late") {
+                                                                if (document.getElementById("reason").value === "") {
+                                                                    alert("Please provide reason for late !");
+                                                                } else {
+                                                                    document.getElementById("form").submit();
+                                                                }
+                                                            } else {
+                                                                document.getElementById("form").submit();
+                                                            }
+                                                        }
                                                     }
-                                                    document.getElementById("adate").value = date;
-                                                    document.getElementById("checkin").value = time;
-                                                    document.getElementById("form").submit();
                                                 }
 </script>

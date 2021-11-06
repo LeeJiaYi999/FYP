@@ -19,22 +19,13 @@ if (isset($_GET['id'])) {
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if ($_POST['type'] == "update") {
         $sql = "UPDATE attendance SET checkin_time='" . $_POST['cin'] . "',checkout_time='" . $_POST['cout'] . "',status='" . $_POST['status'] . "',attendance_date='" . $_POST['adate'] . "' WHERE attendance_id='" . $current_data["attendance_id"] . "'";
         if ($conn->query($sql)) {
             echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
         } else {
             echo '<script>alert("Update fail !")</script>';
         }
-    } else {
-        $sql = "DELETE FROM `attendance` WHERE `attendance_id` = '" . $current_data["attendance_id"] . "'";
-        if ($conn->query($sql)) {
-            echo '<script>alert("Delete Successfully !");window.location.href = "home.php";</script>';
-        } else {
-            echo '<script>alert("Delete fail !")</script>';
-        }
     }
-}
 ?>
 
 <html>
@@ -110,6 +101,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     echo $current_data["attendance_date"];
                                                     ?>" readonly>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label>Reason</label>
+                                                    <input type="text" class="form-control" name="reason" id="reason" value="<?php
+                                                    echo $current_data["reason"];
+                                                    ?>" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Description</label>
+                                                    <input type="text" class="form-control" name="description" id="description" value="<?php
+                                                    echo $current_data["description"];
+                                                    ?>" readonly>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -119,7 +122,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <input type="text" class="form-control" name="type" id="type" style="display:none" value="update" readonly>
                                         <button type="button" class="btn btn-success btn-flat" id="btn_modify" onclick="modify()"><i class="fa fa-check-square-o"></i> Modify</button>
                                         <button type="button" class="btn btn-success btn-flat" id="btn_update" onclick="update()"><i class="fa fa-check-square-o"></i> Update</button>
-                                        <button type="button" class="btn btn-danger btn-flat" id="btn_delete" onclick="remove()"><i class="fa fa-trash"></i> Delete</button>
                                         <button type="button" class="btn btn-default btn-flat pull-left" id="btn_cancel" onclick="location.href = 'viewAttendanceList.php'"><i class="fa fa-close"></i> Cancel</button>
                                     </div>
                                 </form>
@@ -149,13 +151,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 if (document.getElementById("cin").value === "" || document.getElementById("cout").value === "" || document.getElementById("status").value === "") {
                                                     alert("Please fill in the blank !");
                                                 } else {
-                                                    document.getElementById("form").submit();
-                                                }
-                                            }
-
-                                            function remove() {
-                                                if (confirm("Confirm to delete ?")) {
-                                                    document.getElementById("type").value = "delete";
                                                     document.getElementById("form").submit();
                                                 }
                                             }

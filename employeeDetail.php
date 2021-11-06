@@ -20,7 +20,7 @@ if (isset($_GET['id'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($_POST['action'] == "save") {
         $sql = "UPDATE employee SET employee_name='" . $_POST['employee_name'] . "',image=null,leave_available='" . $_POST['leave'] . "',salary_amount='" . $_POST['salary'] . "',department_name='" . $_POST['department'] . "',"
-                . "ic_no='" . $_POST['ic'] . "',email='" . $_POST['email'] . "',gender='" . $_POST['gender'] . "',phone_no='" . $_POST['phone'] . "',address='" . $_POST['address'] . "',employee_type='" . $_POST['employee_type'] . "',birth_date='" . $_POST['bdate'] . "' WHERE employee_id='" . $current_data['employee_id'] . "'";
+                . "ic_no='" . $_POST['ic'] . "',email='" . $_POST['email'] . "',gender='" . $_POST['gender'] . "',phone_no='" . $_POST['phone'] . "',address='" . $_POST['address'] . "',employee_type='" . $_POST['employee_type'] . "',birth_date='" . $_POST['bdate'] . "',account_status='" . $_POST['account_status'] . "',inactive_description='" . $_POST['inactive_description'] . "' WHERE employee_id='" . $current_data['employee_id'] . "'";
         if ($conn->query($sql)) {
             echo '<script>alert("Update Successfully !");window.location.href = "home.php";</script>';
         } else {
@@ -135,8 +135,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                                 echo "<option value=" . $row["employee_type"] . " selected>" . $row["employee_type"] . "</option>";
                                                             }
                                                             if ($current_data["employee_type"] == "Admin") {
+                                                                echo "<option>Department Head</option>";
+                                                                echo "<option>Employee</option>";
+                                                            } else if ($current_data["employee_type"] == "Department Head") {
+                                                                echo "<option>Admin</option>";
                                                                 echo "<option>Employee</option>";
                                                             } else {
+                                                                echo "<option>Department Head</option>";
                                                                 echo "<option>Admin</option>";
                                                             }
                                                         } else {
@@ -219,17 +224,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         echo $current_data["address"];
                                                         ?></textarea>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label>Account Status</label>
+                                                    <select type="select" class="form-control" name="account_status" id="account_status" onchange="enable_desc()" onclick="enable_desc()" readonly>
+                                                        <?php
+                                                        $sql = "SELECT * FROM employee WHERE employee_id = '$id' LIMIT 1";
+                                                        $result = $conn->query($sql);
+                                                        if ($result->num_rows > 0) {
+                                                            while ($row = mysqli_fetch_array($result)) {
+                                                                echo "<option value=" . $row["account_status"] . " selected>" . $row["account_status"] . "</option>";
+                                                            }
+                                                            if ($current_data["account_status"] == "Active") {
+                                                                echo "<option value='Inactive'>Inactive</option>";
+                                                            } else {
+                                                                echo "<option value='Active'>Active</option>";
+                                                            }
+                                                        } else {
+                                                            echo '<script>alert("Invalid input !")</script>';
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Deactivate Reason</label>
+                                                    <textarea class="form-control" type="textarea" name="inactive_description" id="inactive_description" rows="3" placeholder="Enter Address" disabled ><?php
+                                                        echo $current_data["inactive_description"];
+                                                        ?></textarea>
+                                                </div>
                                             </div>
+
+                                        </div><!-- /.box-body -->
+
+                                        <div class="box-footer"<?php
+                                        if ($current_data["account_status"] == "Inactive") {
+                                            echo "style='display:none'";
+                                        }
+                                        ?>>
+                                            <button type="button" id="btnmodify" name="btnmodify" class="btn btn-primary">Modify</button>
+                                            <button type="submit" id="btnsave" name="action" class="btn btn-primary" value="save">Save</button>
+                                            <button class="btn btn-primary" name="action" value="delete">Delete</button>
+                                            <button class="btn btn-primary">Cancel</button>
                                         </div>
-
-                                    </div><!-- /.box-body -->
-
-                                    <div class="box-footer">
-                                        <button type="button" id="btnmodify" name="btnmodify" class="btn btn-primary">Modify</button>
-                                        <button type="submit" id="btnsave" name="action" class="btn btn-primary" value="save">Save</button>
-                                        <button class="btn btn-primary" name="action" value="delete">Delete</button>
-                                        <button class="btn btn-primary">Cancel</button>
-                                    </div>
                                 </form>
                             </div><!-- /.box -->
                         </div><!--/.col (left) -->
@@ -245,9 +280,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
 
         <script>var loadFile = function (event) {
-                                                                    var image = document.getElementById('img_display');
-                                                                    image.src = URL.createObjectURL(event.target.files[0]);
-                                                                };
+                                                            var image = document.getElementById('img_display');
+                                                            image.src = URL.createObjectURL(event.target.files[0]);
+                                                        };
         </script>
 
         <script>
@@ -271,6 +306,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 })
 
             })
+
+            function enable_desc() {
+                if (document.getElementById("account_status").value === "Inactive") {
+//                    $("textarea[type=textarea]").removeAttr("disabled");
+                    document.getElementById("inactive_description").disabled = false;
+                } else {
+//                    $("textarea[type=textarea]").prop("disabled", true);
+                    document.getElementById("inactive_description").disabled = true;
+                }
+            }
 
         </script>
     </body>

@@ -66,6 +66,7 @@ if (isset($_GET["type"])) {
                                                 <th>Task Title</th>
                                                 <th>Task Description</th>                                                
                                                 <th>Responsible member(s)</th>
+                                                <th>Difficulty Level</th>
                                                 <th>Progress(%)</th>
                                                 <th>Due Date</th>
                                                 <th>View</th>
@@ -82,6 +83,7 @@ if (isset($_GET["type"])) {
                                                 <td>" . $row["task_title"] . "</td>
                                                 <td>" . $row["task_description"] . "</td>
                                                 <td>" . $row["employee_id"] . "</td>
+                                                <td>" . $row["difficulty"] . "</td>
                                                 <td>" . $row["progress"] . "</td>
                                                 <td>" . $row["due_date"] . "</td>
                                                 <td><a class='btn btn-warning' style='width: 100%' href='taskDetail.php?id=" . $row["task_id"] . "'><i class='fa fa-camera'></i></a></td>
@@ -95,16 +97,9 @@ if (isset($_GET["type"])) {
                                         </tbody>
                                     </table>
                                 </div><!-- /.box-body -->
-                                <div class = 'box-footer' <?php if ($_SESSION['User']['employee_type'] !== "Admin"){echo "style='display:none'";}?>>
-                                    <label>Create a new project?</label>
-                                    <button class = 'btn btn-primary' onclick = 'location.href = "taskAdd.php"'>Add</button>
-                                </div>
-                               
-
                             </div><!-- /.box -->
                         </div>
                     </div>
-
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
         </div><!-- ./wrapper -->
@@ -122,17 +117,17 @@ if (isset($_GET["type"])) {
 
         <!-- page script -->
         <script type="text/javascript">
-            $(function () {
-                $("#example1").dataTable();
-                $('#example2').dataTable({
-                    "bPaginate": true,
-                    "bLengthChange": false,
-                    "bFilter": false,
-                    "bSort": true,
-                    "bInfo": true,
-                    "bAutoWidth": false
-                });
-            });
+                                        $(function () {
+                                            $("#example1").dataTable();
+                                            $('#example2').dataTable({
+                                                "bPaginate": true,
+                                                "bLengthChange": false,
+                                                "bFilter": false,
+                                                "bSort": true,
+                                                "bInfo": true,
+                                                "bAutoWidth": false
+                                            });
+                                        });
         </script>
 
     </body>

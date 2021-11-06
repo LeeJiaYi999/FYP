@@ -1,25 +1,24 @@
 <?php
 session_start();
 include("db_connection.php");
-$sql = "SELECT department_id FROM department ORDER BY department_id DESC LIMIT 1";
+$sql = "SELECT claim_id FROM claim ORDER BY claim_id DESC LIMIT 1";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while ($row = mysqli_fetch_array($result)) {
-        $latestnum = ((int) substr($row['department_id'], 1)) + 1;
-        $newid = "D{$latestnum}";
+        $latestnum = ((int) substr($row['claim_id'], 1)) + 1;
+        $newid = "C{$latestnum}";
         break;
     }
 } else {
-    $newid = "D1001";
+    $newid = "C20001";
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "INSERT INTO department(department_id, department_name, department_description) "
-            . "VALUES ('" . $_POST['department_id'] . "','" . $_POST['department_name'] . "','" . $_POST['department_description'] . "')";
+    $sql = "INSERT INTO claim(claim_id, claim_description, claim_amount, document, employee_id, claim_date, status) VALUES ('" . $_POST['claim_id'] . "','" . $_POST['claim_description'] . "','" . $_POST['claim_amount'] . "', null ,'" . $_SESSION["User"]["employee_id"] . "','" . $_SESSION["date"] . "','Pending')";
+
     if ($conn->query($sql)) {
         echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
-
-    }else{
+    } else {
         echo '<script>alert("Create Fail !");</script>';
     }
 }
@@ -28,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Add Department</title>
+        <title>Claim Expenses</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <!-- bootstrap 3.0.2 -->
         <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -51,12 +50,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Department
-                        <small>[Add]</small>
+                        Expenses
+                        <small>[Claim]</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Add New Department</li>
+                        <li class="active">Claim Expenses</li>
                     </ol>
                 </section>
 
@@ -68,36 +67,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <!-- general form elements -->
                             <div class="box box-primary">
                                 <div class="box-header">
-                                    <h3 class="box-title">Add Department</h3>
+                                    <h3 class="box-title">Claim Expenses</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
                                 <form method="post">
                                     <div class="box-body">
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-9">
                                                 <div class="form-group">
-                                                    <label for="department_id">Department ID</label>
-                                                    <input type="text" class="form-control" name="department_id" id="department_id" placeholder="Enter department id" value="<?php echo $newid ?>" readOnly>
+                                                    <label>Claim ID</label>
+                                                    <input type="text" class="form-control" name="claim_id" id="claim_id" placeholder="Claim ID" value="<?php echo $newid ?>" readOnly>
+                                                </div>       
+                                                <label>Claim Amount</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">RM</span>
+                                                    <input type="text" name="claim_amount" id="claim_amount" class="form-control">
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label>Claim Description</label>
+                                                    <textarea class="form-control" name="claim_description" rows="3" placeholder="Enter description"></textarea>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="departmentname">Department Name</label>
-                                                    <input type="text" class="form-control" name="department_name" id="department_name" placeholder="Enter department name">
-                                                </div>        
-                                                <div class="form-group">
-                                                    <label>Department Description</label>
-                                                    <textarea class="form-control" name="department_description" id="department_description" rows="3" placeholder="Enter description"></textarea>
+                                                    <label for="proof">Proof Document</label>
+                                                    <input type="file" name="document" id="document">
+                                                    <p class="help-block">Upload the relevant document here.</p>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div><!-- /.box-body -->
+                                    </div>
                                     <div class="box-footer">
-                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        <button type="submit" class="btn btn-primary" onclick="add()" id="btnadd" >Submit</button>
                                     </div>
                                 </form>
-
                             </div><!-- /.box -->
-
-
                         </div><!--/.col (left) -->
                         <!-- right column -->
                     </div>   <!-- /.row -->
@@ -113,4 +116,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </body>
 </html>
-

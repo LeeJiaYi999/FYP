@@ -8,7 +8,7 @@ include("db_connection.php");
         <header class="header">
             <a href="index.html" class="logo">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->
-                Admin
+                Welcome Employee
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
@@ -25,15 +25,15 @@ include("db_connection.php");
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="glyphicon glyphicon-user"></i>
-                                <span>Jane Doe <i class="caret"></i></span>
+                                <span><?php echo $_SESSION["User"]["employee_name"] ?><i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header bg-light-blue">
-                                    <img src="img/avatar3.png" class="img-circle" alt="User Image" />
+                                    <img src="<?php echo $_SESSION["User"]["image"] ?>" class="img-circle" alt="User Image" />
                                     <p>
-                                        Jane Doe - Web Developer
-                                        <small>Member since Nov. 2012</small>
+                                        <?php echo $_SESSION["User"]["employee_name"] ?> - <?php echo $_SESSION["User"]["department_name"] ?>
+                                        <small>Member since <?php echo $_SESSION["User"]["join_date"] ?></small>
                                     </p>
                                 </li>
                                 <!-- Menu Footer-->
@@ -59,15 +59,15 @@ include("db_connection.php");
                 <!-- Sidebar user panel -->
                 <div class="user-panel">
                     <div class="pull-left image">
-                        <img src="img/avatar3.png" class="img-circle" alt="User Image" />
+                        <img src="<?php echo $_SESSION["User"]["image"] ?>" class="img-circle" alt="User Image" />
                     </div>
                     <div class="pull-left info">
-                        <p>Hello, Jane</p>
+                        <p>Hello, <?php echo $_SESSION["User"]["employee_name"] ?></p>
 
                         <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                     </div>
                 </div>
-                <!-- search form -->
+                <!--                 search form -->
                 <form action="#" method="get" class="sidebar-form">
                     <div class="input-group">
                         <input type="text" name="q" class="form-control" placeholder="Search..."/>
@@ -122,19 +122,28 @@ include("db_connection.php");
                             <i class='fa fa-laptop'></i>
                             <span>Recruitment</span>
                         </a>
-                    </li>";
-                    }
-                    ?>
-
-                    <?php
-                    if ($_SESSION["User"]["employee_type"] === "Admin") {
-                        echo"<li class='treeview'>
+                    </li>
+                    <li class='treeview'>
                         <a href='#'>
                             <i class='fa fa-table'></i> <span>Employee Management</span>
                             <i class='fa fa-angle-left pull-right'></i>
                         </a>
                         <ul class='treeview-menu'>
                             <li><a href='departmentList.php'><i class='fa fa-angle-double-right'></i> Department</a></li>
+                            <li><a href='scheduleList.php'><i class='fa fa-angle-double-right'></i> Schedule</a></li>
+                            <li><a href='positionList.php'><i class='fa fa-angle-double-right'></i> Position</a></li>
+                            <li><a href='employeeList.php'><i class='fa fa-angle-double-right'></i> Employee</a></li>
+                        </ul>
+                    </li>";
+                    }
+
+                    if ($_SESSION["User"]["employee_type"] === "Department Head") {
+                        echo"<li class='treeview'>
+                        <a href='#'>
+                            <i class='fa fa-table'></i> <span>Employee Management</span>
+                            <i class='fa fa-angle-left pull-right'></i>
+                        </a>
+                        <ul class='treeview-menu'>
                             <li><a href='employeeList.php'><i class='fa fa-angle-double-right'></i> Employee</a></li>
                         </ul>
                     </li>";
@@ -149,8 +158,10 @@ include("db_connection.php");
                         <ul class="treeview-menu">
                             <li><a href="applyLeave.php"><i class="fa fa-angle-double-right"></i> Apply Leave</a></li>
                             <?php
-                            if ($_SESSION["User"]["employee_type"] === "Admin") {
+                            if ($_SESSION["User"]["employee_type"] === "Department Head") {
                                 echo"<li><a href='leaveApplication.php'><i class='fa fa-angle-double-right'></i> Leave Application</a></li>";
+                                echo"<li><a href='leaveHistory.php'><i class='fa fa-angle-double-right'></i> Leave History</a></li>";
+                            } else if ($_SESSION["User"]["employee_type"] === "Admin") {
                                 echo"<li><a href='leaveHistory.php'><i class='fa fa-angle-double-right'></i> Leave History</a></li>";
                             }
                             ?>
@@ -165,7 +176,7 @@ include("db_connection.php");
                         <ul class="treeview-menu">
                             <li class="treeview">
                                 <?php
-                                if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                if ($_SESSION["User"]["employee_type"] === "Admin" || $_SESSION["User"]["employee_type"] === "Department Head") {
                                     echo"<li><a href='projectList.php'><i class='fa fa-angle-double-right'></i>Project</a></li>";
                                 }
                                 ?>
@@ -177,7 +188,7 @@ include("db_connection.php");
                                 </a>
                                 <ul class="treeview-menu">
                                     <?php
-                                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                    if ($_SESSION["User"]["employee_type"] === "Admin" || $_SESSION["User"]["employee_type"] === "Department Head") {
                                         echo"<li><a href='taskList.php'><i class='fa fa-angle-double-right'></i> All Task</a></li>";
                                     }
                                     ?>
@@ -187,23 +198,69 @@ include("db_connection.php");
 
                         </ul>
                     </li>
-                    <li>
-                        <a href="pages/mailbox.html">
-                            <i class="fa fa-envelope"></i> <span>Payroll</span>
-                        </a>
-                    </li>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-table"></i> <span>Training</span>
+                            <i class="fa fa-table"></i> <span>Payroll</span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
+
                             <li class="treeview">
                                 <a href="#">
-                                    <i class="fa fa-table"></i> <span>Training</span>
+                                    <i class="fa fa-table"></i> <span>Office Expenses</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
                                 <ul class="treeview-menu">
+
+                                    <li class="treeview">
+                                        <a href="#">
+                                            <i class="fa fa-table"></i> <span>Personal Claims</span>
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </a>
+                                        <ul class="treeview-menu">
+                                            <li><a href='claimExpense.php'><i class="fa fa-angle-double-right"></i>Claim Expenses</a></li>
+                                            <li><a href="claimApproval.php?type1='1'"><i class='fa fa-angle-double-right'></i>Personal Pending Claim</a></li>
+                                            <li><a href="claimApproval.php?type2='1'"><i class='fa fa-angle-double-right'></i>Personal Claim History</a></li>
+
+                                        </ul>
+                                    </li>
+                                    <?php
+                                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                        echo"<li class='treeview'><a href='#'>
+                                        <i class = 'fa fa-table'></i> <span>All Claims</span>
+                                        <i class = 'fa fa-angle-left pull-right'></i>
+                                        </a>
+                                        <ul class = 'treeview-menu'>
+                                        <li><a href = 'claimApproval.php?type3='1''><i class = 'fa fa-angle-double-right'></i>Approve Claim</a></li>
+                                        <li><a href = 'claimApproval.php'><i class = 'fa fa-angle-double-right'></i>Expenses Claim History</a></li>
+
+                                        </ul>
+                                        </li>";
+                                    }
+                                    ?>
+
+                                </ul>
+                            </li>
+                            <?php
+                            if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                echo"<li><a href='payrollList.php'><i class='fa fa-angle-double-right'></i>Salary List</a></li>";
+                            }
+                            ?>
+
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class = "fa fa-table"></i> <span>Training</span>
+                            <i class = "fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class = "treeview-menu">
+                            <li class = "treeview">
+                                <a href = "#">
+                                    <i class = "fa fa-table"></i> <span>Training</span>
+                                    <i class = "fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class = "treeview-menu">
                                     <?php
                                     if ($_SESSION["User"]["employee_type"] === "Admin") {
                                         echo"<li><a href='trainingList.php'><i class='fa fa-angle-double-right'></i> All Training</a></li>";
@@ -235,6 +292,16 @@ include("db_connection.php");
                             </li>
                         </ul>
                     </li>
+                    <?php
+                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                        echo"<li>
+                        <a href='report.php'>
+                            <i class='fa fa-laptop'></i>
+                            <span>Report</span>
+                        </a>
+                    </li>";
+                    }
+                    ?>
                 </ul>
             </section>
             <!-- /.sidebar -->

@@ -7,9 +7,19 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while ($row = mysqli_fetch_array($result)) {
         if ($row["checkout_time"] === "" || !$row["checkout_time"]) {
+            $sql2 = "SELECT e.`employee_id`, s.* FROM `employee` e, `schedule` s WHERE e.`Schedule_id` = s.`Schedule_id` AND `employee_id` = '" . $_SESSION["User"]["employee_id"] . "'";
+            $result2 = $conn->query($sql2);
+            if ($result2->num_rows > 0) {
+                while ($row2 = mysqli_fetch_array($result2)) {
+                    echo '<script>var checkOutTime = ' . json_encode($row2["checkout_time"]) . ';</script>';
+                    break;
+                }
+            }
             $logOut = true;
+            echo '<script>var logOut = true;</script>';
         } else {
             $logOut = false;
+            echo '<script>var logOut = false;</script>';
         }
         $data = $row;
         break;
@@ -19,7 +29,7 @@ if ($result->num_rows > 0) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "UPDATE `attendance` SET checkout_time= '" . $_POST['checkout'] . "' WHERE 1";
+    $sql = "UPDATE `attendance` SET `checkout_time`='" . $_POST['checkout'] . "',`description`='" . $_POST['des'] . "' WHERE `attendance_id` = '{$data["attendance_id"]}'";
     if ($conn->query($sql)) {
         echo '<script>alert("Check Out successfully\n Back to home page !");window.location.href = "home.php";</script>';
     } else {
@@ -42,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Theme style -->
         <link href="css/AdminLTE.css" rel="stylesheet" type="text/css" />
     </head>
-    <body>
+    <body onload="form_load()">
 
         <?php include("sidebar.php");
         ?>
@@ -109,6 +119,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     ?>" readOnly/>
                                                 </div>
 
+                                                <div class="form-group" style="text-align: center" id="des_box" <?php
+                                                if (isset($data)) {
+                                                    if ($data["description"] === "") {
+                                                        echo "style='display:none'";
+                                                    } else {
+                                                        echo "style='display:block'";
+                                                    }
+                                                }
+                                                ?>>
+                                                    <label style="color:red">Description</label>
+                                                    <input style="text-align: center" type="text" class="form-control" name="des" id="des" placeholder="Provide details when leave earlier" value="<?php
+                                                    if (isset($data)) {
+                                                        echo $data["description"];
+                                                    }
+                                                    ?>" <?php
+                                                           if (isset($data)) {
+                                                               if ($data["checkout_time"] !== null) {
+                                                                   echo "readonly";
+                                                               }
+                                                           }
+                                                           ?>/>
+                                                </div>
+
 
                                             </div>
                                         </div>
@@ -142,11 +175,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </html>
 
 <script>
+                                            var setCurrentHour = 0;
+                                            var setCurrentMin = 0;
+                                            function form_load() {
+                                                if (logOut) {
+                                                    var today = new Date();
+                                                    var time = today.getHours() + ":" + today.getMinutes();
+                                                    var checkOutHour = parseInt(checkOutTime.substring(0, 2));
+                                                    var checkOutMin = parseInt(checkOutTime.substring(3, 5));
+                                                    var time = today.getHours() + ":" + today.getMinutes();
+                                                    document.getElementById("checkout").value = time;
+                                                    setCurrentHour = today.getHours();
+                                                    setCurrentMin = today.getMinutes();
+                                                    if (today.getHours() < checkOutHour) {
+                                                        document.getElementById("status").style.display = "block";
+                                                    } else if (today.getHours() === checkOutHour && today.getMinutes() < checkOutMin) {
+                                                        document.getElementById("status").style.display = "block";
+                                                    } else {
+                                                        document.getElementById("status").style.display = "none";
+                                                    }
+                                                }
+                                            }
                                             function checkOut() {
                                                 var today = new Date();
-                                                var time = today.getHours() + ":" + today.getMinutes();
-                                                document.getElementById("checkout").value = time;
-                                                document.getElementById("form").submit();
+                                                var checkOutHour = parseInt(checkOutTime.substring(0, 2));
+                                                var checkOutMin = parseInt(checkOutTime.substring(3, 5));
+                                                if ((setCurrentHour - today.getHours()) > 0) {
+                                                    alert("Reload the form ...");
+                                                    location.reload();
+                                                } else {
+                                                    if ((today.getMinutes() - setCurrentMin) > 2) {
+                                                        alert("Reload the form ...");
+                                                        location.reload();
+                                                    } else {
+                                                        if (setCurrentHour < checkOutHour) {
+                                                            if (document.getElementById("des").value === "") {
+                                                                alert("PLease provide description for leave early");
+                                                            } else {
+                                                                document.getElementById("form").submit();
+                                                            }
+                                                        } else if (setCurrentHour === checkOutHour && setCurrentMin < checkOutMin) {
+                                                            if (document.getElementById("des").value === "") {
+                                                                alert("PLease provide description for leave early");
+                                                            } else {
+                                                                document.getElementById("form").submit();
+                                                            }
+                                                        } else {
+                                                            document.getElementById("form").submit();
+                                                        }
+                                                    }
+                                                }
                                             }
 </script>
-

@@ -59,21 +59,28 @@ include("db_connection.php");
                                                 <th>Department</th>
                                                 <th>Employee Type</th>
                                                 <th>Email</th>
+                                                <th>Account Status</th>
                                                 <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM employee";
+                                            if ($_SESSION["User"]["employee_type"] == "Admin") {
+                                                $sql = "SELECT * FROM employee";
+                                            }else{
+                                                 $sql = "SELECT * FROM employee WHERE department_name = '" . $_SESSION["User"]["department_name"] . "'";
+                                            }
+                                            
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
                                                     echo "<tr>
-                                                <td>" . $row["employee_id"] . "</td>
-                                                <td>" . $row["employee_name"] . "</td>
-                                                <td>" . $row["department_name"] . "</td>
-                                                <td>" . $row["employee_type"] . "</td>
-                                                <td>" . $row["email"] . "</td>
+                                                    <td>" . $row["employee_id"] . "</td>
+                                                    <td>" . $row["employee_name"] . "</td>
+                                                    <td>" . $row["department_name"] . "</td>
+                                                    <td>" . $row["employee_type"] . "</td>
+                                                    <td>" . $row["email"] . "</td>
+                                                    <td>" . $row["account_status"] . "</td>
                                                 <td><a class='btn btn-warning' style='width: 100%' href='employeeDetail.php?id=".$row["employee_id"]."'><i class='fa fa-camera'></i></a></td>
                                             </tr>";
                                                 }

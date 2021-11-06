@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
                 $project_data = $row2;
                 break;
             }
-        }else{
+        } else {
             echo '<script>alert("Extract data error !\nContact IT department for maintainence");";</script>';
         }
     } else {

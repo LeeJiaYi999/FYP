@@ -1,14 +1,29 @@
 <?php
 session_start();
 include("db_connection.php");
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "UPDATE employee SET employee_name='" . $_POST['ename'] . "',image=null,password='" . $_POST['password'] . "',"
-            . "ic_no='" . $_POST['ic'] . "',email='" . $_POST['email'] . "',phone_no='" . $_POST['phone'] . "',address='" . $_POST['address'] . "' WHERE employee_id='" . $_SESSION["User"]["employee_id"] . "'";
+    $image = $_FILES["img"];
+    if ($image) {
+        $newimg = "image/{$_POST['eid']}";
+        if (move_uploaded_file($_FILES["img"]["tmp_name"], $newimg)) {
+            echo '<script>console.log("ok")</script>';
+        } else {
+            echo '<script>console.log("no")</script>';
+        }
+//        move_uploaded_file($_FILES["img"]["tmp_name"], $newimg);
+    } else {
+        $newimg = null;
+    }
+
+    $sql = "UPDATE employee SET employee_name='" . $_POST['ename'] . "',image='" . $newimg . "',password='" . $_POST['password'] . "',"
+            . "ic_no='" . $_POST['ic'] . "',phone_no='" . $_POST['phone'] . "',address='" . $_POST['address'] . "' WHERE employee_id='" . $_SESSION["User"]["employee_id"] . "'";
     if ($conn->query($sql)) {
         $_SESSION["User"]["employee_name"] = $_POST['ename'];
+        $_SESSION["User"]["img"] = $newimg;
         $_SESSION["User"]["password"] = $_POST['password'];
         $_SESSION["User"]["ic_no"] = $_POST['ic'];
-        $_SESSION["User"]["email"] = $_POST['email'];
         $_SESSION["User"]["phone_no"] = $_POST['phone'];
         $_SESSION["User"]["address"] = $_POST['address'];
         $sql = "UPDATE `attendance` SET employee_name='" . $_POST['ename'] . "' WHERE employee_id='" . $_SESSION["User"]["employee_id"] . "'";
@@ -53,14 +68,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <h3 class="box-title">My Profile</h3>
                                 </div><!-- /.box-header -->
                                 <!-- form start -->
-                                <form role="form" method="post">
+                                <form id="form" method="post" enctype="multipart/form-data">
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="col-md-12">
                                                     <img class="img-fluid mb-12" src="<?php
-                                                    if (isset($current_data)) {
-                                                        echo $current_data["img"];
+                                                    if (isset($_SESSION["User"])) {
+                                                        echo $_SESSION["User"]["image"];
                                                     }
                                                     ?>" alt="Photo" style="width: 100%;height:300px;padding-top: 10px" id="img_display" name="img_display">
                                                 </div>
@@ -74,6 +89,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
+                                                    <label>Employee ID</label>
+                                                    <input type="text" class="form-control" name="eid" id="eid" placeholder="Employee ID" readOnly value="<?php
+                                                           echo $_SESSION["User"]["employee_id"];
+                                                           ?>">
+                                                </div>
+                                                <div class="form-group">
                                                     <label>Employee Name</label>
                                                     <input type="text" class="form-control" name="ename" id="ename" placeholder="Enter Eployee Name" required="required" 
                                                            value="<?php
@@ -82,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Password</label>
-                                                    <input type="password" class="form-control" name="password" id="lname" placeholder="Enter Password" required="required" 
+                                                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password" required="required" 
                                                            value="<?php
                                                            echo $_SESSION["User"]["password"];
                                                            ?>">
@@ -93,14 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                            value="<?php
                                                            echo $_SESSION["User"]["ic_no"];
                                                            ?>">
-                                                </div> 
-                                                <div class="form-group">
-                                                    <label>Email</label>
-                                                    <input type="text" class="form-control" name="email" id="email" placeholder="Enter Email" required="required" 
-                                                           value="<?php
-                                                           echo $_SESSION["User"]["email"];
-                                                           ?>">
-                                                </div> 
+                                                </div>                                    
                                                 <div class="form-group">
                                                     <label>Phone Number</label>
                                                     <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter Phone Number" required="required" 
@@ -120,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </div><!-- /.box-body -->
 
                                     <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="button" class="btn btn-primary" onclick="save()" id="btnsave">Submit</button>
                                     </div>
                                 </form>
                             </div><!-- /.box -->
@@ -138,8 +152,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script src="js/bootstrap.min.js" type="text/javascript"></script>
         <!-- AdminLTE App -->
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
-    </body>
-</html>
 
-</body>
+        <script>
+                                            var loadFile = function (event) {
+                                                var image = document.getElementById('img_display');
+                                                image.src = URL.createObjectURL(event.target.files[0]);
+                                            };
+                                            function save() {
+                                                var valid = true;
+                                                var error = "";
+                                                if (document.getElementById("ename").value === "") {
+                                                    valid = false;
+                                                    error += "Please enter Name !\n";
+                                                }
+
+                                                if (document.getElementById("password").value === "") {
+                                                    valid = false;
+                                                    error += "Please enter Password !\n";
+                                                } else {
+                                                    if (document.getElementById("password").value.length < 6) {
+                                                        valid = false;
+                                                        error += "Password is not strong recommend over 6 digit !\n";
+                                                    }
+                                                }
+                                                
+                                                if (document.getElementById("ic").value === "") {
+                                                    valid = false;
+                                                    error += "Please enter IC or Passport!\n";
+                                                }                                                
+                                                if (document.getElementById("phone").value === "") {
+                                                    valid = false;
+                                                    error += "Please enter Phone !\n";
+                                                } else {
+                                                    var phone_number = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+                                                    if (!document.getElementById("phone").value.match(phone_number)) {
+                                                        valid = false;
+                                                        error += "Invalid Phone !\n";
+                                                    }
+                                                }
+                                                
+                                                if (document.getElementById("address").value === "") {
+                                                    valid = false;
+                                                    error += "Please enter Address !\n";
+                                                }
+                                                
+                                                if (valid) {
+                                                        document.getElementById("form").submit();
+                                                
+                                                } else {
+                                                    alert(error);
+                                                }
+                                            }
+        </script>
+    </body>
 </html>

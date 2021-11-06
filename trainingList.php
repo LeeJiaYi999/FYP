@@ -75,9 +75,10 @@ if (isset($_GET["type"])) {
                                                 <td>" . $row["training_id"] . "</td>
                                                 <td>" . $row["training_description"] . "</td>
                                                 <td>" . $row["department_name"] . "</td>
-                                                <td>" . $row["create_date"] . "</td>
-                                                <td><div class='row'>
-                                                <div class='col-md-6'>
+                                                <td>" . $row["create_date"] . "</td>";
+                                                    if (isset($_GET["type"])) {
+                                                        echo "<td><div class='row'>
+                                                            <div class='col-md-6'>
                                                     <a class='btn btn-warning' style='width: 100%' href='trainingDetail.php?id=" . $row["training_id"] . "'><i class='fa fa-camera'></i></a>
                                                 </div>
                                                 <div class='col-md-6'>
@@ -85,14 +86,28 @@ if (isset($_GET["type"])) {
                                                 </div>
                                                 </div></td>
                                             </tr>";
+                                                    } else {
+
+                                                        echo "<td><div class='row'>
+                                                <div class='col-md-12'>
+                                                    <a class='btn btn-warning' style='width: 100%' href='trainingDetail.php?id=" . $row["training_id"] . "'><i class='fa fa-camera'></i></a>
+                                                </div>
+                                                
+                                                </div></td>
+                                            </tr>";
+                                                    }
                                                 }
                                             } else {
-                                                echo '<script>alert("No available data !")</script>';
+                                                echo '<script>alert("No available data!")</script>';
                                             }
                                             ?>
                                         </tbody>
                                     </table>            
-                                    <div class="box-footer" <?php if ($_SESSION['User']['employee_type'] !== "Admin"){echo "style='display:none'";}?>>
+                                    <div class="box-footer" <?php
+                                            if ($_SESSION['User']['employee_type'] !== "Admin") {
+                                                echo "style = 'display:none'";
+                                            }
+                                            ?>>
                                         <label>Add a new training session?</label>
                                         <button class="btn btn-primary" onclick="location.href = 'trainingAdd.php'">Add</button>
                                     </div>
@@ -109,8 +124,8 @@ if (isset($_GET["type"])) {
 
         <!-- jQuery 2.0.2 -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-        <!-- Bootstrap -->
-        <script src="js/bootstrap.min.js" type="text/javascript"></script>
+        <!--Bootstrap-->
+        <script src = "js/bootstrap.min.js" type = "text/javascript"></script>
         <!-- DATA TABES SCRIPT -->
         <script src="js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
         <script src="js/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
@@ -119,17 +134,17 @@ if (isset($_GET["type"])) {
 
         <!-- page script -->
         <script type="text/javascript">
-                                                $(function () {
-                                                    $("#example1").dataTable();
-                                                    $('#example2').dataTable({
-                                                        "bPaginate": true,
-                                                        "bLengthChange": false,
-                                                        "bFilter": false,
-                                                        "bSort": true,
-                                                        "bInfo": true,
-                                                        "bAutoWidth": false
-                                                    });
+                                            $(function () {
+                                                $("#example1").dataTable();
+                                                $('#example2').dataTable({
+                                                    "bPaginate": true,
+                                                    "bLengthChange": false,
+                                                    "bFilter": false,
+                                                    "bSort": true,
+                                                    "bInfo": true,
+                                                    "bAutoWidth": false
                                                 });
+                                            });
         </script>
 
     </body>

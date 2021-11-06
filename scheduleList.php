@@ -2,12 +2,11 @@
 session_start();
 include("db_connection.php");
 ?>
-
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Leave Application</title>
+        <title>Project List</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <!-- bootstrap 3.0.2 -->
         <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -34,12 +33,12 @@ include("db_connection.php");
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Employee Leave Application Table
+                        Schedule List Table
                         <small>[List]</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Leave Application</li>
+                        <li class="active">Schedule List Table</li>
                     </ol>
                 </section>
 
@@ -49,47 +48,33 @@ include("db_connection.php");
                         <div class="col-xs-12">                           
                             <div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">All Employee Leave Application</h3>                                    
+                                    <h3 class="box-title">Available Schedule List</h3>    
                                 </div><!-- /.box-header -->
-                                <div class="box-body">
-                                    <table id="example1" class="table table-bordered">
+
+                                <div class="box-body table-responsive">
+                                    <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Employee ID</th>
-                                                <th>Employee Name</th>
-                                                <th>Leave Day</th>
-                                                <th>Start Date</th>
-                                                <th>End Date</th>
-                                                <th>Leave Type</th>
-                                                <th>Leave Description</th>
-                                                <th>Approved By</th>
-                                                <th>Reason</th>
-                                                <th>Status</th>
+                                                <th>Schedule ID</th>
+                                                <th>Schedule Name</th>
+                                                <th>Check In Time</th>
+                                                <th>Check Out Time</th>
+                                                <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM `leave` WHERE `employee_id` = '" . $_SESSION["User"]["employee_id"] . "'";
+                                            $sql = "SELECT * FROM schedule";
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
-                                                    if ($row["status"] === "Reject") {
-                                                        $color = "red";
-                                                    } else {
-                                                        $color = "green";
-                                                    }
-                                                    echo
-                                                    "<tr><td>" . $row["employee_id"] . "</td>
-                                                <td>" . $row["employee_name"] . "</td>
-                                                <td>" . $row["leave_day"] . "</td>
-                                                <td>" . $row["start_date"] . "</td>
-                                                <td>" . $row["end_date"] . "</td>
-                                                <td>" . $row["leave_type"] . "</td>
-                                                <td>" . $row["leave_description"] . "</td>
-                                                <td>" . $row["Approve_by"] . "</td>
-                                                <td>" . $row["reason"] . "</td>
-                                                <td style='color: $color'>" . $row["status"] . "</td>
-                                                </tr>";
+                                                    echo "<tr>
+                                                <td>" . $row["Schedule_id"] . "</td>
+                                                <td>" . $row["status"] . "</td>
+                                                <td>" . $row["checkin_time"] . "</td>
+                                                <td>" . $row["checkout_time"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='scheduleDetails.php?id=" . $row["Schedule_id"] . "'><i class='fa fa-camera'></i></a></td>
+                                            </tr>";
                                                 }
                                             } else {
                                                 echo '<script>alert("No available data !")</script>';
@@ -98,12 +83,14 @@ include("db_connection.php");
 
                                         </tbody>
                                     </table>
-
                                 </div><!-- /.box-body -->
+                                <div class="box-footer">
+                                    <label>Create a new schedule?</label>
+                                    <button class="btn btn-primary" onclick="location.href = 'scheduleAdd.php'">Add</button>
+                                </div>
                             </div><!-- /.box -->
                         </div>
                     </div>
-
                 </section><!-- /.content -->
             </aside><!-- /.right-side -->
         </div><!-- ./wrapper -->
@@ -121,17 +108,17 @@ include("db_connection.php");
 
         <!-- page script -->
         <script type="text/javascript">
-            $(function () {
-                $("#example1").dataTable();
-                $('#example2').dataTable({
-                    "bPaginate": true,
-                    "bLengthChange": false,
-                    "bFilter": false,
-                    "bSort": true,
-                    "bInfo": true,
-                    "bAutoWidth": false
-                });
-            });
+                                        $(function () {
+                                            $("#example1").dataTable();
+                                            $('#example2').dataTable({
+                                                "bPaginate": true,
+                                                "bLengthChange": false,
+                                                "bFilter": false,
+                                                "bSort": true,
+                                                "bInfo": true,
+                                                "bAutoWidth": false
+                                            });
+                                        });
         </script>
 
     </body>

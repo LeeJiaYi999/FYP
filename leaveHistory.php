@@ -62,35 +62,46 @@ include("db_connection.php");
                                                 <th>End Date</th>
                                                 <th>Leave Type</th>
                                                 <th>Status</th>
+                                                <th>Leave Description</th>
+                                                <th>Approved By</th>
+                                                <th>Reason</th>
                                                 <th>Tools</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM `leave` WHERE `status` = 'Approve' OR `status` = 'Reject'";
+                                            if($_SESSION["User"]["employee_type"] === "Admin"){
+                                                $sql = "SELECT * FROM `leave`";
+                                            }else{
+                                                $sql = "SELECT DISTINCT * FROM `leave` l,`employee` e WHERE e.`employee_id` = l.`employee_id` AND (`status` = 'Approve' OR `status` = 'Reject') AND e.department_name = '{$_SESSION["User"]["department_name"]}'";
+                                            }
+//                                            $sql = "SELECT * FROM `leave` WHERE `status` = 'Approve' OR `status` = 'Reject'";
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
-                                                    if($row["status"] === "Reject"){
+                                                    if ($row["status"] === "Reject") {
                                                         $color = "red";
-                                                    }else{
+                                                    } else {
                                                         $color = "green";
                                                     }
-                                                    echo 
-                                                "<tr><td>".$row["employee_id"]."</td>
-                                                <td>".$row["employee_name"]."</td>
-                                                <td>".$row["leave_day"]."</td>
-                                                <td>".$row["start_date"]."</td>
-                                                <td>".$row["end_date"]."</td>
-                                                <td>".$row["leave_type"]."</td>
-                                                <td style='color: $color'>" .$row["status"]."</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='changeLeaveHistory.php?id=".$row["leave_id"]."'><i class='fa fa-camera'></i></a></td></tr>";
+                                                    echo
+                                                    "<tr><td>" . $row["employee_id"] . "</td>
+                                                <td>" . $row["employee_name"] . "</td>
+                                                <td>" . $row["leave_day"] . "</td>
+                                                <td>" . $row["start_date"] . "</td>
+                                                <td>" . $row["end_date"] . "</td>
+                                                <td>" . $row["leave_type"] . "</td>
+                                                <td style='color: $color'>" . $row["status"] . "</td>
+                                                <td>" . $row["leave_description"] . "</td>
+                                                <td>" . $row["Approve_by"] . "</td>
+                                                <td>" . $row["reason"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='changeLeaveHistory.php?id=" . $row["leave_id"] . "'><i class='fa fa-camera'></i></a></td></tr>";
                                                 }
                                             } else {
                                                 echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>
-                                            
+
                                         </tbody>
                                     </table>
                                 </div><!-- /.box-body -->

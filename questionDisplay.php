@@ -53,11 +53,11 @@ echo '<script>var Array_question = ' . json_encode($Array_question) . ';</script
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO answer(answer_id, employee_id, training_id, correct_amount) "
-            . "VALUES ('" . $newid . "','" . $_SESSION["User"]["employee_id"] . "','" . $_POST['training_id'] . "','" . $_POST['correct_amount'] . "')";
+            . "VALUES ('" . $newid . "','" . $_SESSION["User"]["employee_id"] . "','" . $_POST['training_id'] . "','" . $correct_amount . "')";
     if ($conn->query($sql)) {
-        echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
+        echo '<script>alert("Submit Successfully !");window.location.href = "home.php";</script>';
     } else {
-        echo '<script>alert("Create Fail !");</script>';
+        echo '<script>alert("Submit Fail !");</script>';
     }
 }
 ?>
@@ -107,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <div class="box-header">
                                     <h3 class="box-title">Training Question</h3>
                                 </div><!-- /.box-header -->
-                                <form>
+                                <form id="form" method="post">
                                     <!--<form role="form">-->
                                     <div class="box-body">
                                         <div class="row">
@@ -180,6 +180,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 }
                                                 correct_amount = correct_answer / i *100;
                                                 alert("Total correct answer =" + correct_answer + " (" + correct_amount + "%)");
+                                                
+                                                document.getElementById("form").submit();
+//                                                correct_amount.submit();
                                             }
 
         </script>

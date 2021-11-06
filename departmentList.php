@@ -55,6 +55,7 @@ include("db_connection.php");
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
+                                                <th>Department ID</th>
                                                 <th>Department Name</th>
                                                 <th>Department Description</th>
                                                 <th>View</th>
@@ -67,13 +68,14 @@ include("db_connection.php");
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
                                                     echo "<tr>
+                                                <td>" . $row["department_id"] . "</td>
                                                 <td>" . $row["department_name"] . "</td>
                                                 <td>" . $row["department_description"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 100%' href='departmentDetails.php'><i class='fa fa-camera'></i></a></td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='departmentDetail.php?id=" . $row["department_id"] . "'><i class='fa fa-camera'></i></a></td>
                                             </tr>";
                                                 }
                                             } else {
-                                                echo '<script>alert("Invalid input !")</script>';
+                                                echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>
 

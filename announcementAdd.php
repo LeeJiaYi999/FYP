@@ -14,7 +14,7 @@ if ($result->num_rows > 0) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "INSERT INTO announcement(announcement_id, announcement_description, post_date) VALUES ('" . $_POST['announcement_id'] . "','" . $_POST['announcement_description'] . "','" . $_SESSION["date"] . "')";
+    $sql = "INSERT INTO announcement(announcement_id, announcement_description, post_date, department_name) VALUES ('" . $_POST['announcement_id'] . "','" . $_POST['announcement_description'] . "','" . $_SESSION["date"] . "','" . $_POST["department_name"] . "')";
 
     if ($conn->query($sql)) {
         echo '<script>alert("Create Successfully !");window.location.href = "home.php";</script>';
@@ -78,7 +78,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <div class="form-group">
                                                     <label>Announcement ID</label>
                                                     <input type="text" class="form-control" name="announcement_id" id="announcement_id" placeholder="announcement ID" value="<?php echo $newid ?>" readOnly>
-                                                </div>                                           
+                                                </div>                 
+                                                <div class="form-group">
+                                                    <label>Department</label>
+                                                    <select class="form-control" name="department_name">
+                                                        <?php
+                                                        if ($_SESSION["User"]["employee_type"] == "Admin") {
+                                                            $sql = "SELECT * FROM department";
+                                                            $result = $conn->query($sql);
+                                                            if ($result->num_rows > 0) {
+                                                                echo "<option value='General'>General</option>";
+                                                                while ($row = mysqli_fetch_array($result)) {
+                                                                    echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                                }
+                                                            } else {
+                                                                echo '<script>alert("Invalid input !")</script>';
+                                                            }
+                                                        } else {
+                                                            echo "<option value=" . $_SESSION["User"]["department_name"] . ">" . $_SESSION["User"]["department_name"] . "</option>";
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
                                                 <div class="form-group">
                                                     <label>Announcement Description</label>
                                                     <textarea class="form-control" name="announcement_description" rows="3" placeholder="Enter description"></textarea>
@@ -106,5 +127,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </body>
 </html>
-
-

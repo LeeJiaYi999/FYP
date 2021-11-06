@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <link href="css/ionicons.min.css" rel="stylesheet" type="text/css" />
         <!-- Theme style -->
         <link href="css/AdminLTE.css" rel="stylesheet" type="text/css" />
-        
+
     </head>
     <body>
         <?php
@@ -84,14 +84,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     <label>Department</label>
                                                     <select class="form-control" name="department" id='department'>
                                                         <?php
-                                                        $sql = "SELECT * FROM department";
-                                                        $result = $conn->query($sql);
-                                                        if ($result->num_rows > 0) {
-                                                            while ($row = mysqli_fetch_array($result)) {
-                                                                echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                        if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                                            if ($current_data["department_name"] != "Cross Department") {
+                                                                echo "<option value='Cross Department'>Cross Department</option>";
+                                                            } else if ($current_data["department_name"] == "Cross Department") {
+                                                                echo "<option value='Cross Department' selected>Cross Department</option>";
                                                             }
+
+                                                            $sql = "SELECT * FROM department";
+                                                            $result = $conn->query($sql);
+                                                            if ($result->num_rows > 0) {
+                                                                while ($row = mysqli_fetch_array($result)) {
+                                                                    if ($current_data["department_name"] == $row["department_name"]) {
+                                                                        echo "<option value=" . $row["department_name"] . " selected>" . $row["department_name"] . "</option>";
+                                                                    } else {
+                                                                        echo "<option value=" . $row["department_name"] . ">" . $row["department_name"] . "</option>";
+                                                                    }
+                                                                }
+                                                            } else {
+                                                                echo '<script>alert("No available department!")</script>';
+                                                            }
+                                                            
                                                         } else {
-                                                            echo '<script>alert("Invalid input !")</script>';
+                                                            echo "<option value=" . $_SESSION["User"]["department_name"] . ">" . $_SESSION["User"]["department_name"] . "</option>";
                                                         }
                                                         ?>
                                                     </select>

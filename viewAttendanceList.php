@@ -61,22 +61,28 @@ include("db_connection.php");
                                                 <th>Status</th>
                                                 <th>Check Out</th>
                                                 <th>Attendance Date</th>
+                                                <th>Reason</th>
+                                                <th>Description</th>
                                                 <th>Tools</th>
                                             </tr>
                                         </thead>
                                         <tbody>
 
                                             <?php
-                                            $sql = "SELECT * FROM attendance";
+                                            if($_SESSION["User"]["employee_type"] === "Admin"){
+                                                $sql = "SELECT * FROM attendance";
+                                            }else{
+                                                $sql = "SELECT * FROM `attendance` a,`employee` e WHERE e.`employee_id` = a.`employee_id` AND e.department_name = '{$_SESSION["User"]["department_name"]}'";
+                                            }
                                             $result = $conn->query($sql);
                                             if ($result->num_rows > 0) {
                                                 while ($row = mysqli_fetch_array($result)) {
-                                                    if($row["status"] === "Late"){
+                                                    if ($row["status"] === "Late") {
                                                         $color = "red";
-                                                    }else{
+                                                    } else {
                                                         $color = "green";
                                                     }
-                                                    
+
                                                     echo "<tr>
                                                 <td>" . $row["employee_id"] . "</td>
                                                 <td>" . $row["employee_name"] . "</td>
@@ -84,7 +90,9 @@ include("db_connection.php");
                                                 <td style='color: $color'>" . $row["status"] . "</td>
                                                 <td>" . $row["checkout_time"] . "</td>
                                                 <td>" . $row["attendance_date"] . "</td>
-                                                <td><a class='btn btn-warning' style='width: 50%' href='viewAttendanceDetails.php?id=".$row["attendance_id"]."'><i class='fa fa-camera'></i></a>
+                                                <td>" . $row["reason"] . "</td>
+                                                <td>" . $row["description"] . "</td>
+                                                <td><a class='btn btn-warning' style='width: 100%' href='viewAttendanceDetails.php?id=" . $row["attendance_id"] . "'><i class='fa fa-camera'></i></a>
                                                 </td>
                                             </tr>";
                                                 }
