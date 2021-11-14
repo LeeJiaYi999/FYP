@@ -4,8 +4,12 @@ include("db_connection.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $type = $_POST["type"];
+    if (isset($_POST["sdate"])) {
+        $startdate = $_POST["sdate"];
+        $enddate = $_POST["edate"];
+    }
     if ($type == "employee") {
-        $sql = "SELECT * FROM `employee`";
+        $sql = "SELECT * FROM `employee` WHERE str_to_date(join_date, '%Y-%m-%d' ) >= str_to_date('$startdate', '%Y-%m-%d' )AND str_to_date(join_date, '%Y-%m-%d' ) <= str_to_date('$enddate', '%Y-%m-%d' )";
         $title = "Employee Report";
     } else if ($type == "attendance") {
         $sql = "SELECT * FROM `attendance`";
@@ -91,11 +95,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     </select>
                                                     <div class="from-group">
                                                         <label>Start Date:</label>
-                                                        <input type="date" class="form-control" name="sdate" onChange="update_day()" id="sdate" placeholder="Enter Start Date">
+                                                        <input class="form-control" id="sdate" name="sdate"  placeholder="yyyy-mm-dd" value="<?php
+                                                        if (isset($startdate)) {
+                                                            echo $startdate;
+                                                        }
+                                                        ?>">
                                                     </div>
                                                     <div class="from-group">
                                                         <label>End Date:</label>
-                                                        <input type="date" class="form-control" name="edate" onChange="update_day()" id="edate" placeholder="Enter End Date">
+                                                        <input class="form-control" id="edate" name="edate" placeholder="yyyy-mm-dd" value="<?php
+                                                        if (isset($enddate)) {
+                                                            echo $enddate;
+                                                        }
+                                                        ?>">
                                                     </div>
                                                     <button class="btn btn-primary" type="button" style="width:100px;padding-left: 10px" onclick="generate_report()">Generate</button>
                                                     &emsp;
@@ -406,34 +418,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
 
         <script>
+                                                        var dateInputMask = function dateInputMask(elm) {
+                                                            elm.addEventListener('keypress', function (e) {
+                                                                if (e.keyCode < 47 || e.keyCode > 57) {
+                                                                    e.preventDefault();
+                                                                }
+
+                                                                var len = elm.value.length;
+
+                                                                if (len !== 1 || len !== 3) {
+                                                                    if (e.keyCode === 47) {
+                                                                        e.preventDefault();
+                                                                    }
+                                                                }
+
+                                                                if (len === 2) {
+                                                                    elm.value += '-';
+                                                                }
+
+                                                                if (len === 5) {
+                                                                    elm.value += '-';
+                                                                }
+                                                            });
+                                                        };
+
+                                                        dateInputMask(document.getElementById("sdate"));
+                                                        dateInputMask(document.getElementById("edate"));
+
                                                         function generate_report() {
                                                             var fulfill = true;
                                                             var message = "";
-                                                            if (document.getElementById("type").value === "") {
-                                                                var dateformat = /^\d{2}\/\d{2}\/\d{4}$/;
+                                                            if (document.getElementById("type").value === "employee") {
+//                                                                var dateformat = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
 
-                                                                if (!document.getElementById("datefrom") || document.getElementById("datefrom") === "") {
+                                                                if (!document.getElementById("sdate") || document.getElementById("sdate") === "") {
                                                                     fulfill = false;
                                                                     message += "Invalid date from!\n"
                                                                 } else {
-                                                                    if (!document.getElementById("datefrom").value.match(dateformat)) {
+                                                                    if (!document.getElementById("sdate").value) {
                                                                         fulfill = false;
                                                                         message += "Invalid date from!\n"
                                                                     }
                                                                 }
 
-                                                                if (!document.getElementById("dateto") || document.getElementById("dateto") === "") {
+                                                                if (!document.getElementById("edate") || document.getElementById("edate") === "") {
                                                                     fulfill = false;
                                                                     message += "Invalid date to!\n"
                                                                 } else {
-                                                                    if (!document.getElementById("dateto").value.match(dateformat)) {
+                                                                    if (!document.getElementById("edate").value) {
                                                                         fulfill = false;
                                                                         message += "Invalid date to!\n"
                                                                     }
                                                                 }
 
-                                                                var datefrom = new Date(document.getElementById("datefrom").value);
-                                                                var dateto = new Date(document.getElementById("dateto").value);
+                                                                var datefrom = new Date(document.getElementById("sdate").value);
+                                                                var dateto = new Date(document.getElementById("edate").value);
 
 
                                                                 if (datefrom > dateto) {
@@ -451,14 +490,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         }
 
                                                         function changetype(value) {
-                                                            if (value === "leave") {
-                                                                document.getElementById("datefrom").disabled = false;
-                                                                document.getElementById("dateto").disabled = false;
+                                                            if (value === "employee") {
+                                                                document.getElementById("sdate").disabled = false;
+                                                                document.getElementById("edate").disabled = false;
                                                             } else {
-                                                                document.getElementById("datefrom").disabled = true;
-                                                                document.getElementById("dateto").disabled = true;
-                                                                document.getElementById("datefrom").value = "";
-                                                                document.getElementById("dateto").value = "";
+                                                                document.getElementById("sdate").disabled = true;
+                                                                document.getElementById("edate").disabled = true;
+                                                                document.getElementById("sdate").value = "";
+                                                                document.getElementById("edate").value = "";
                                                             }
                                                         }
 
