@@ -61,6 +61,9 @@ include("db_connection.php");
                                                 <th>Status</th>
                                                 <th>Check Out</th>
                                                 <th>Attendance Date</th>
+                                                <th>Reason</th>
+                                                <th>Description</th>
+                                                <th>Overtime</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -82,10 +85,13 @@ include("db_connection.php");
                                                 <td style='color: $color'>" . $row["status"] . "</td>
                                                 <td>" . $row["checkout_time"] . "</td>
                                                 <td>" . $row["attendance_date"] . "</td>
+                                                <td>" . $row["reason"] . "</td>
+                                                <td>" . $row["description"] . "</td>
+                                                <td>" . $row["overtime"] . "</td>
                                             </tr>";
                                                 }
                                             } else {
-                                                echo '<script>alert("Invalid input !")</script>';
+                                                echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>                                         
                                         </tbody>

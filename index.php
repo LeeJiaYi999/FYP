@@ -4,10 +4,10 @@ include("db_connection.php");
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
-    $sql = "SELECT * FROM employee WHERE email = '$email' and password = '$password' LIMIT 1";
+    $sql = "SELECT * FROM employee WHERE email = '$email' and password = '$password' and account_status = 'Active' LIMIT 1";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
-        while ($row = mysqli_fetch_array($result)) {
+        while ($row = mysqli_fetch_array($result)){
             $_SESSION["User"] = $row;
             $_SESSION["date"] = $_POST['date'];
             header("location: home.php");

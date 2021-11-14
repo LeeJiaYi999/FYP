@@ -151,7 +151,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 </div>
                                                 <div class="form-group" id="reason_box">
                                                     <label>Reason</label>
-                                                    <input type="text" class="form-control" name="reason" id="reason" value="<?php
+                                                    <input type="text" class="form-control" name="reason" id="reason" <?php
+                                                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                                                        echo "disabled";
+                                                    }
+                                                    ?> value="<?php
                                                     if (isset($data)) {
                                                         echo $data["reason"];
                                                     }

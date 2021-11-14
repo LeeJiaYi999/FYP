@@ -29,7 +29,7 @@ if ($result->num_rows > 0) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "UPDATE `attendance` SET `checkout_time`='" . $_POST['checkout'] . "',`description`='" . $_POST['des'] . "' WHERE `attendance_id` = '{$data["attendance_id"]}'";
+    $sql = "UPDATE `attendance` SET `checkout_time`='" . $_POST['checkout'] . "',`description`='" . $_POST['des'] . "' ,`overtime`=" . $_POST['overtime'] . " WHERE `attendance_id` = '{$data["attendance_id"]}'";
     if ($conn->query($sql)) {
         echo '<script>alert("Check Out successfully\n Back to home page !");window.location.href = "home.php";</script>';
     } else {
@@ -65,8 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <small>[Form]</small>
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Check Out</a></li>
+                        <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="checkOut.php">Check Out</a></li>
                     </ol>
                 </section>
 
@@ -141,6 +141,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                            }
                                                            ?>/>
                                                 </div>
+                                                <div class="form-group" style="text-align: center">
+                                                    <label>Overtime Hours</label>
+                                                    <input style="text-align: center" type="text" class="form-control" name="overtime" id="overtime" placeholder="Overtime" value="<?php
+                                                    if (isset($data)) {
+                                                        echo $data["overtime"];
+                                                    }
+                                                    ?>" readOnly/>
+                                                </div>
 
 
                                             </div>
@@ -171,10 +179,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <script src="js/bootstrap.min.js" type="text/javascript"></script>
         <!-- AdminLTE App -->
         <script src="js/AdminLTE/app.js" type="text/javascript"></script>
-    </body>
-</html>
 
-<script>
+        <script>
                                             var setCurrentHour = 0;
                                             var setCurrentMin = 0;
                                             function form_load() {
@@ -188,11 +194,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     setCurrentHour = today.getHours();
                                                     setCurrentMin = today.getMinutes();
                                                     if (today.getHours() < checkOutHour) {
-                                                        document.getElementById("status").style.display = "block";
+                                                        document.getElementById("des").style.display = "block";
                                                     } else if (today.getHours() === checkOutHour && today.getMinutes() < checkOutMin) {
-                                                        document.getElementById("status").style.display = "block";
+                                                        document.getElementById("des").style.display = "block";
                                                     } else {
-                                                        document.getElementById("status").style.display = "none";
+                                                        document.getElementById("des").style.display = "none";
                                                     }
                                                 }
                                             }
@@ -212,18 +218,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                             if (document.getElementById("des").value === "") {
                                                                 alert("PLease provide description for leave early");
                                                             } else {
+                                                                var othours = today.getHours() - checkOutHour;
+                                                                document.getElementById("overtime").value = othours;
                                                                 document.getElementById("form").submit();
                                                             }
                                                         } else if (setCurrentHour === checkOutHour && setCurrentMin < checkOutMin) {
                                                             if (document.getElementById("des").value === "") {
                                                                 alert("PLease provide description for leave early");
                                                             } else {
+                                                                var othours = today.getHours() - checkOutHour;
+                                                                document.getElementById("overtime").value = othours;
                                                                 document.getElementById("form").submit();
                                                             }
                                                         } else {
+                                                            var othours = today.getHours() - checkOutHour;
+                                                            document.getElementById("overtime").value = othours;
                                                             document.getElementById("form").submit();
                                                         }
                                                     }
                                                 }
                                             }
-</script>
+        </script>
+
+    </body>
+</html>

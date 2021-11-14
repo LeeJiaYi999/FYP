@@ -74,8 +74,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         Recruitment
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Recruitment</a></li>
+                        <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="recruitment.php">Recruitment</a></li>
                     </ol>
                 </section>
 

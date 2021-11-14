@@ -97,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Attendance Date</label>
-                                                    <input type="date" class="form-control" name="adate" id="adate" value="<?php
+                                                    <input type="text" class="form-control" name="adate" id="adate" value="<?php
                                                     echo $current_data["attendance_date"];
                                                     ?>" readonly>
                                                 </div>
@@ -113,6 +113,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     echo $current_data["description"];
                                                     ?>" readonly>
                                                 </div>
+                                                <div class="form-group" style="text-align: center">
+                                                    <label>Overtime Hours</label>
+                                                    <input type="text" class="form-control" name="overtime" id="overtime" placeholder="Overtime" value="<?php        
+                                                        echo $current_data["overtime"];
+                                                    ?>" readOnly/>
+                                                </div>
+
                                             </div>
                                         </div>
 

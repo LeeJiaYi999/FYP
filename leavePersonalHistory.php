@@ -78,6 +78,14 @@ include("db_connection.php");
                                                     } else {
                                                         $color = "green";
                                                     }
+                                                    $emp_name = "";
+                                                    $sql2 = "SELECT * FROM `employee` WHERE employee_id ='" . $row["Approve_by"] . "'";
+                                                    $result2 = $conn->query($sql2);
+                                                    if ($result2->num_rows > 0) {
+                                                        while ($row2 = mysqli_fetch_array($result2)) {
+                                                            $emp_name = $row2["employee_name"];
+                                                        }
+                                                    }
                                                     echo
                                                     "<tr><td>" . $row["employee_id"] . "</td>
                                                 <td>" . $row["employee_name"] . "</td>
@@ -86,7 +94,7 @@ include("db_connection.php");
                                                 <td>" . $row["end_date"] . "</td>
                                                 <td>" . $row["leave_type"] . "</td>
                                                 <td>" . $row["leave_description"] . "</td>
-                                                <td>" . $row["Approve_by"] . "</td>
+                                                <td>" . $emp_name . "</td>
                                                 <td>" . $row["reason"] . "</td>
                                                 <td style='color: $color'>" . $row["status"] . "</td>
                                                 </tr>";

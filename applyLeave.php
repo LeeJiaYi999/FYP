@@ -57,8 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <small>[Form]</small>
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Apply Leave</a></li>
+                        <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="applyLeave.php">Apply Leave</a></li>
                     </ol>
                 </section>
 

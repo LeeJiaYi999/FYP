@@ -60,8 +60,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <small>[Form]</small>
                     </h1>
                     <ol class="breadcrumb">
-                        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li><a href="#">Check In</a></li>
+                        <li><a href="home.php"><i class="fa fa-dashboard"></i> Home</a></li>
+                        <li><a href="checkIn.php">Check In</a></li>
                     </ol>
                 </section>
 
@@ -169,7 +169,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
                                                         var time = today.getHours() + ":" + today.getMinutes();
                                                         var checkInHour = parseInt(checkInTime.substring(0, 2));
-                                                        var checkInMin = parseInt(checkInTime.substring(3, 5));
+                                                        var checkInMin = parseInt(checkInTime.substring(0, 5));
 
                                                         setCurrentHour = today.getHours();
                                                         setCurrentMin = today.getMinutes();

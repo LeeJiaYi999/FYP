@@ -63,15 +63,16 @@ include("db_connection.php");
                                                 <th>Attendance Date</th>
                                                 <th>Reason</th>
                                                 <th>Description</th>
+                                                <th>Overtime</th>
                                                 <th>Tools</th>
                                             </tr>
                                         </thead>
                                         <tbody>
 
                                             <?php
-                                            if($_SESSION["User"]["employee_type"] === "Admin"){
+                                            if ($_SESSION["User"]["employee_type"] === "Admin") {
                                                 $sql = "SELECT * FROM attendance";
-                                            }else{
+                                            } else {
                                                 $sql = "SELECT * FROM `attendance` a,`employee` e WHERE e.`employee_id` = a.`employee_id` AND e.department_name = '{$_SESSION["User"]["department_name"]}'";
                                             }
                                             $result = $conn->query($sql);
@@ -92,12 +93,13 @@ include("db_connection.php");
                                                 <td>" . $row["attendance_date"] . "</td>
                                                 <td>" . $row["reason"] . "</td>
                                                 <td>" . $row["description"] . "</td>
+                                                <td>" . $row["overtime"] . "</td>
                                                 <td><a class='btn btn-warning' style='width: 100%' href='viewAttendanceDetails.php?id=" . $row["attendance_id"] . "'><i class='fa fa-camera'></i></a>
                                                 </td>
                                             </tr>";
                                                 }
                                             } else {
-                                                echo '<script>alert("Invalid input !")</script>';
+                                                echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>                                         
                                         </tbody>

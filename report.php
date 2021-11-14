@@ -165,9 +165,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         } else if ($type == "attendance") {
                                             echo '<tr>
                                         <th style="width: 10%;text-align: center">
-                                            Attendance ID
-                                        </th>
-                                        <th style="width: 10%;text-align: center">
                                             Employee ID
                                         </th>
                                         <th style="width: 10%;text-align: center">
@@ -190,6 +187,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         </th>
                                         <th style="width: 20%;text-align: center">
                                              Description
+                                        </th>
+                                         <th style="width: 10%;text-align: center">
+                                             Overtime
                                         </th>
                                     </tr>';
                                         } else if ($type == "leave") {
@@ -261,6 +261,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     . "<td style='text-align: center'><a>" . $row["status"] . "</a></td>"
                                                     . "<td style='text-align: center'><a>" . $row["reason"] . "</a></td>"
                                                     . "<td style='text-align: center'><a>" . $row["description"] . "</a></td>"
+                                                    . "<td style='text-align: center'><a>" . $row["overtime"] . "</a></td>"
                                                     . "</tr>";
                                                 }
                                             }
@@ -408,7 +409,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         function generate_report() {
                                                             var fulfill = true;
                                                             var message = "";
-                                                            if (document.getElementById("type").value === "leave") {
+                                                            if (document.getElementById("type").value === "") {
                                                                 var dateformat = /^\d{2}\/\d{2}\/\d{4}$/;
 
                                                                 if (!document.getElementById("datefrom") || document.getElementById("datefrom") === "") {

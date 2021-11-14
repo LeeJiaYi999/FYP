@@ -1,12 +1,17 @@
 <?php
 include("db_connection.php");
+if (!isset($_SESSION["User"])) {
+    header("Location: index.php");
+    exit();
+}
+    
 ?>
 
 <html>
     <head><meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'></head>
     <body class="skin-black">
         <header class="header">
-            <a href="index.html" class="logo">
+            <a href="#" class="logo">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->
                 Welcome Employee
             </a>
@@ -80,7 +85,7 @@ include("db_connection.php");
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu">
                     <?php
-                    if ($_SESSION["User"]["employee_type"] === "Admin") {
+                    if ($_SESSION["User"]["employee_type"] === "Admin" || $_SESSION["User"]["employee_type"] === "Department Head") {
                         echo"<li class='active'>
                         <a href='home.php'>
                             <i class='fa fa-dashboard'></i> <span>Dashboard</span>
@@ -110,7 +115,7 @@ include("db_connection.php");
                     </li>
                     <li>
                         <a href="announcementList.php">
-                            <i class="fa fa-laptop"></i>
+                            <i class="fa fa-bullhorn"></i>
                             <span>Announcement</span>
                         </a>
 
@@ -125,7 +130,7 @@ include("db_connection.php");
                     </li>
                     <li class='treeview'>
                         <a href='#'>
-                            <i class='fa fa-table'></i> <span>Employee Management</span>
+                            <i class='fa fa-male'></i> <span>Employee Management</span>
                             <i class='fa fa-angle-left pull-right'></i>
                         </a>
                         <ul class='treeview-menu'>
@@ -140,7 +145,7 @@ include("db_connection.php");
                     if ($_SESSION["User"]["employee_type"] === "Department Head") {
                         echo"<li class='treeview'>
                         <a href='#'>
-                            <i class='fa fa-table'></i> <span>Employee Management</span>
+                            <i class='fa fa-male'></i> <span>Employee Management</span>
                             <i class='fa fa-angle-left pull-right'></i>
                         </a>
                         <ul class='treeview-menu'>
@@ -170,7 +175,7 @@ include("db_connection.php");
                     </li>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-table"></i> <span>Task Tracking</span>
+                            <i class="fa fa-archive"></i> <span>Task Tracking</span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
@@ -183,7 +188,7 @@ include("db_connection.php");
                             </li>
                             <li class="treeview">
                                 <a href="#">
-                                    <i class="fa fa-table"></i> <span>Task</span>
+                                    <i class="fa fa-archive"></i> <span>Task</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
                                 <ul class="treeview-menu">
@@ -200,21 +205,21 @@ include("db_connection.php");
                     </li>
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-table"></i> <span>Payroll</span>
+                            <i class="fa fa-money"></i> <span>Payroll</span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
 
                             <li class="treeview">
                                 <a href="#">
-                                    <i class="fa fa-table"></i> <span>Office Expenses</span>
+                                    <i class="fa fa-money"></i> <span>Office Expenses</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
                                 <ul class="treeview-menu">
 
                                     <li class="treeview">
                                         <a href="#">
-                                            <i class="fa fa-table"></i> <span>Personal Claims</span>
+                                            <i class="fa fa-money"></i> <span>Personal Claims</span>
                                             <i class="fa fa-angle-left pull-right"></i>
                                         </a>
                                         <ul class="treeview-menu">
@@ -227,7 +232,7 @@ include("db_connection.php");
                                     <?php
                                     if ($_SESSION["User"]["employee_type"] === "Admin") {
                                         echo"<li class='treeview'><a href='#'>
-                                        <i class = 'fa fa-table'></i> <span>All Claims</span>
+                                        <i class = 'fa fa-money'></i> <span>All Claims</span>
                                         <i class = 'fa fa-angle-left pull-right'></i>
                                         </a>
                                         <ul class = 'treeview-menu'>
@@ -251,13 +256,13 @@ include("db_connection.php");
                     </li>
                     <li class="treeview">
                         <a href="#">
-                            <i class = "fa fa-table"></i> <span>Training</span>
+                            <i class = "fa fa-user"></i> <span>Training</span>
                             <i class = "fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class = "treeview-menu">
                             <li class = "treeview">
                                 <a href = "#">
-                                    <i class = "fa fa-table"></i> <span>Training</span>
+                                    <i class = "fa fa-user"></i> <span>Training</span>
                                     <i class = "fa fa-angle-left pull-right"></i>
                                 </a>
                                 <ul class = "treeview-menu">
@@ -271,7 +276,7 @@ include("db_connection.php");
                             </li>
                             <li class="treeview">
                                 <a href="#">
-                                    <i class="fa fa-table"></i> <span>Training Result</span>
+                                    <i class="fa fa-user"></i> <span>Training Result</span>
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </a>
                                 <ul class="treeview-menu">
@@ -296,7 +301,7 @@ include("db_connection.php");
                     if ($_SESSION["User"]["employee_type"] === "Admin") {
                         echo"<li>
                         <a href='report.php'>
-                            <i class='fa fa-laptop'></i>
+                            <i class='fa fa-book'></i>
                             <span>Report</span>
                         </a>
                     </li>";

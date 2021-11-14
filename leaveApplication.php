@@ -81,6 +81,8 @@ include("db_connection.php");
                                                 <td>".$row["status"]."</td>
                                                 <td><a class='btn btn-warning' style='width: 100%' href='leaveApplicationDetails.php?id=".$row["leave_id"]."'><i class='fa fa-camera'></i></a></td></tr>";
                                                 }
+                                            }else {
+                                                echo '<script>alert("No available data !")</script>';
                                             }
                                             ?>
                                             
